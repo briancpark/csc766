@@ -1,0 +1,44 @@
+(FileAst "array.adap" Begin)
+(ImportFile "array.adap.h")
+
+(VarAst number (DataType function (FuncType function (DataType int 0 )) 0 ))
+(FuncAst number AUTO (FuncType main (DataType int 0 )) Begin )
+(CodeBlock numberBody Begin)
+
+
+
+(ReturnStat return (ConstAst 0))
+(CodeBlock numberBody End)
+(FuncAst number End)
+
+
+
+
+
+(VarAst main (DataType function (FuncType function (DataType int 0 )) 0 ))
+(Comment location "global var main in binrep.c at line 23")
+
+(FuncAst main AUTO (FuncType main (DataType int 0 )) Begin )
+(CodeBlock fbody Begin)
+
+(VarAst i (DataType int 0 ))
+(VarAst j (DataType int 0 ))
+
+
+(VarAst array_1 (DataType array (ArrayType array (DataType int 0 ) 16 ) 0 ))
+
+(VarAst a (DataType array (ArrayType array (DataType int 0 ) 16 ) 0 ))
+(VarAst b (DataType array (ArrayType array (DataType int 0 ) 16 ) 0 ))
+
+(AssignStat = (VarAccAst i)    (ExprAst * (ExprAst + (ConstAst 3)(ConstAst 4))(ConstAst 9))  )
+
+
+(AssignStat = (ArrayAcc . (VarAccAst array_1)(ConstAst 4))  (ExprAst * (ConstAst 2)(ArrayAcc . (VarAccAst array_1)   (ExprAst * (ExprAst + (ConstAst 3)(ConstAst 4))(ConstAst 9))     )  ) )
+
+(AssignStat = (ArrayAcc . (VarAccAst array_1)(ExprAst - (ExprAst * (ConstAst 2 )(VarAccAst i))(ConstAst 3 ))) (ConstAst 0))
+
+(ReturnStat return (ConstAst 0) )
+
+(CodeBlock fbody End)
+(FuncAst main End)
+(FileAst "expression.adap" End)

@@ -1,0 +1,39 @@
+(FileAst "branch.adap" Begin)
+(ImportFile "branch.adap.h")
+
+
+(VarAst number (DataType function (FuncType function (DataType int 0 ) (VarAst p0 (DataType int 0 )) (VarAst p1 (DataType int 0 )) ) 0 ))
+(FuncAst number AUTO (FuncType main (DataType int 0 ) (VarAst p0 (DataType int 0 ))(VarAst p1 (DataType int 0 )) ) Begin )
+(CodeBlock numberBody Begin)
+(ReturnStat return (ConstAst 4))
+(CodeBlock numberBody End)
+(FuncAst number End)
+
+
+(VarAst main (DataType function (FuncType function (DataType int 0 )) 0 ))
+(Comment location "global var main in binrep.c at line 23")
+
+(FuncAst main AUTO (FuncType main (DataType int 0 )) Begin )
+
+(CodeBlock fbody Begin)
+
+(VarAst a (DataType int 0 ))
+(VarAst b (DataType int 0 ))
+(VarAst c (DataType int 0 ))
+(VarAst array_1 (DataType array (ArrayType array (DataType int 0 ) 16 ) 0 ))
+(AssignStat = (VarAccAst a)(ConstAst 2 ))
+(AssignStat = (VarAccAst b)(ConstAst 3 ))
+
+(AssignStat = (VarAccAst a) (ExprAst + (ConstAst 3)(ConstAst 5)))
+
+
+(ExprStat FuncCall (VarAccAst printf)(ConstAst "%d\n") (ExprAst FuncCall (VarAccAst number) (ExprAst + (VarAccAst b)(VarAccAst a)) (ConstAst 6))  )
+
+
+
+
+(ReturnStat return (ConstAst 0))
+
+(CodeBlock fbody End)
+(FuncAst main End)
+(FileAst "branch.adap" End)

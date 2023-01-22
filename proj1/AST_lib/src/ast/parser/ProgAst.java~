@@ -1,0 +1,98 @@
+package ast.parser;
+
+import ast.scanner.*;
+import tools.*;
+import java.lang.*;
+import java.io.*;
+import java.util.*;
+
+public class ProgAst extends SegAst {
+    String workingDirectory;
+    
+    public ProgAst(String workingDir) throws AssertionError {
+        super("UntitledProgram", null); 
+        workingDirectory = workingDir;
+        PrimitiveType it = new PrimitiveType("int", this);
+        typeTable.put("int", it);
+        it = new PrimitiveType("char", this);
+        typeTable.put("char", it);
+        it = new PrimitiveType("double", this);
+        typeTable.put("double", it);
+        it = new PrimitiveType("float", this);
+        typeTable.put("float", it);
+        it = new PrimitiveType("long", this);
+        typeTable.put("long", it);
+        it = new PrimitiveType("unsigned", this);
+        typeTable.put("unsigned", it);
+        it = new PrimitiveType("void", this);
+        typeTable.put("void", it);
+        it = new PrimitiveType("unsigned char", this);
+        typeTable.put("unsigned char", it);
+        it = new PrimitiveType("unsigned int", this);
+        typeTable.put("unsigned int", it);
+    }
+    ProgAst(String nm, AstNode par) throws AssertionError {
+        super(nm, par); 
+    }
+    
+    public void ReadProgram(String fname) throws IOException, AssertionError {
+        Scanner scanner = new Scanner(GetWorkingDirectory()+fname);
+        ReadProgram(scanner);
+    }
+    
+    void ReadRest(Scanner scanner) throws IOException, AssertionError {
+        // Ignore Begin and End labels
+        Token nt = scanner.GetNextToken();
+        Assertion.assert(scanner.MatchSym(")"));
+    }
+    
+    void ReadProgram(Scanner scanner) throws IOException, AssertionError {
+        AstNode nd = ReadNextAstNode(scanner, null);
+        if (nd instanceof ProgAst) {
+            ((ProgAst)nd).ReadRest(scanner);
+            nodeName = nd.nodeName;
+        }
+        else {
+            nodeName = "UntitledProgram";
+            Assertion.assert(nd instanceof FileAst);
+            FileAst nd2 = new FileAst(nd.GetNodeName(), this);
+            nd2.ReadProgram(scanner);
+            ProcessSegNode(nd2);
+        }
+        nd = ReadNextAstNode(scanner, this);
+        while (nd!=null && nd instanceof FileAst) {
+            nd.ReadProgram(scanner);
+            segNodes.add(nd);
+            nd = ReadNextAstNode(scanner, this);
+        }
+        if (nd!=null) {
+            Assertion.assert(nd instanceof ProgAst);
+            ((ProgAst)nd).ReadRest(scanner);
+        }
+    }
+    
+    public static void main(String[] args) throws IOException, AssertionError {
+        ProgAst prog = new ProgAst("C:/Adap/tests/indir/");
+        //prog.ReadProgram("C:/Adap/tests/indir.adap");
+        prog.ReadProgram("indir.adap");
+        /*prog.Dump(System.out);
+        prog.GenCode(System.out); */
+        prog.GenCode();
+    }
+
+  public void Dump(PrintStream fout) throws IOException, AssertionError {
+    fout.println("( "+ ProgAstLabel + " " + nodeName + " Begin )");
+    for (int i=0; i<segNodes.size(); i++) 
+        ((AstNode)segNodes.elementAt(i)).Dump(fout);
+    fout.println("( "+ ProgAstLabel + " " + nodeName + " End )");
+  }
+
+  public void GenCode() throws IOException, AssertionError {
+    FileAst f;
+    Vector nodes = GetSegNodes();
+    for (int i=0; i<nodes.size(); i++) {
+        f = (FileAst) nodes.elementAt(i);
+        f.GenCode();
+    }
+  }
+}
