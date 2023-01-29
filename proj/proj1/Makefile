@@ -109,6 +109,9 @@ ${OUTPUT_DIR}%.new.c: ${INPUT_DIR}%.adap ${INPUT_DIR}%.adap.h ${COMP_FILES:%=${C
 # COMP_FILES are the class names, the compiler files
 build: ${COMP_FILES:%=${COMP_CLASS_DIR}%.class}
 	@echo build target is going
+	@mkdir inputProgramDir
+	@mkdir outputProgramDir
+	@mkdir cfgOutputDir
 
 #this $ seems to go before the build
 
