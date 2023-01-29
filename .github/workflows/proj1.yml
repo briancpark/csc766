@@ -14,8 +14,15 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: make build
-      run: cd proj/proj1 && make build
+      run: cd proj/proj1 |
+        make build
     - name: make compile
-      run: cd proj/proj1 && make compile
+      run: cd proj/proj1 |
+        make build |
+        make compile
     - name: make run
-      run: cd proj/proj1 && make run
+      run: cd proj/proj1 |
+        make build |
+        make compile |
+        make run
+
