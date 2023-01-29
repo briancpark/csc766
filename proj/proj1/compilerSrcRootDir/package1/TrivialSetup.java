@@ -1,395 +1,377 @@
 package package1;
 
-import java.util.*;
 import ast.parser.*;
+
+import java.util.Enumeration;
+import java.util.Stack;
 
 public class TrivialSetup {
 
-	/**
-	 *
-	 * Declares the global counter variable 'counter',
-	 * Declares and defines the methods init(), recordInst(), and report()
-	 *     
-	 ****************/
+    /**
+     * Declares the global counter variable 'counter',
+     * Declares and defines the methods init(), recordInst(), and report()
+     ****************/
 
-	public static void defineDeclareTrivialMethods(AstNode node) throws AssertionError 
-	{
-		Enumeration children = node.GetChildren();
+    public static void defineDeclareTrivialMethods(AstNode node) throws AssertionError {
+        Enumeration children = node.GetChildren();
 
-		AstNode fileNode = (AstNode)children.nextElement();
+        AstNode fileNode = (AstNode) children.nextElement();
 
- 
-		// declare the counter variable
-		VarAst varDecNode = AstBuilder.declareVariable( "counter", "int", 0 );
 
-		// insert the counter variable into the AST
-		varDecNode.InsertMeAsChildOf( fileNode, 0 );
+        // declare the counter variable
+        VarAst varDecNode = AstBuilder.declareVariable("counter", "int", 0);
 
+        // insert the counter variable into the AST
+        varDecNode.InsertMeAsChildOf(fileNode, 0);
 
-		// declare the init() method
-		VarAst initDeclaration = AstBuilder.declareMethod( "init", "function", "void", 0 );
 
-		// insert the init() method declaration into the AST
-		initDeclaration.InsertMeAsChildOf( fileNode, 1 );
+        // declare the init() method
+        VarAst initDeclaration = AstBuilder.declareMethod("init", "function", "void", 0);
 
+        // insert the init() method declaration into the AST
+        initDeclaration.InsertMeAsChildOf(fileNode, 1);
 
-		/* define init() */
 
-		DataType init_def_dType = new DataType( "void", 0 );
+        /* define init() */
 
-		FuncType init_def_FuncType = new FuncType( init_def_dType );
+        DataType init_def_dType = new DataType("void", 0);
 
-		CodeBlock init_def_CodeBlock = new CodeBlock( "initBody" );
+        FuncType init_def_FuncType = new FuncType(init_def_dType);
 
+        CodeBlock init_def_CodeBlock = new CodeBlock("initBody");
 
-		/* init() method's code block */
 
-		// initialize value of 'counter' to 0 
+        /* init() method's code block */
 
-		ConstAst counterValue = new ConstAst( "0" );
+        // initialize value of 'counter' to 0
 
-		VarAccAst counterName = new VarAccAst( "counter" );
+        ConstAst counterValue = new ConstAst("0");
 
-		AssignStat counterAssign = new AssignStat( "=" );
+        VarAccAst counterName = new VarAccAst("counter");
 
-		counterName.InsertMeAsChildOf( counterAssign, 0 );
+        AssignStat counterAssign = new AssignStat("=");
 
-		counterValue.InsertMeAsChildOf( counterAssign, 1 );
+        counterName.InsertMeAsChildOf(counterAssign, 0);
 
-		// insert the statement 'int counter = 0' into the code block
-		counterAssign.InsertMeAsChildOf( init_def_CodeBlock, 0 );
+        counterValue.InsertMeAsChildOf(counterAssign, 1);
 
+        // insert the statement 'int counter = 0' into the code block
+        counterAssign.InsertMeAsChildOf(init_def_CodeBlock, 0);
 
-		// attach the code block to the init() method 
-		FuncAst init_def_FuncAst = new FuncAst( "init", StorageClass.AUTO, init_def_FuncType, init_def_CodeBlock );
 
-		// insert the init() method definition into the AST
-		init_def_FuncAst.InsertMeAsChildOf( fileNode, 2 );
+        // attach the code block to the init() method
+        FuncAst init_def_FuncAst = new FuncAst("init", StorageClass.AUTO, init_def_FuncType, init_def_CodeBlock);
 
+        // insert the init() method definition into the AST
+        init_def_FuncAst.InsertMeAsChildOf(fileNode, 2);
 
-		// declare recordInst()
-		VarAst recordInstDeclaration = AstBuilder.declareMethod( "recordInst", "function", "void", 0 );
 
-		// insert the recordInst() declaration into the AST 
-		recordInstDeclaration.InsertMeAsChildOf( fileNode, 3 );
+        // declare recordInst()
+        VarAst recordInstDeclaration = AstBuilder.declareMethod("recordInst", "function", "void", 0);
 
+        // insert the recordInst() declaration into the AST
+        recordInstDeclaration.InsertMeAsChildOf(fileNode, 3);
 
-		/* define recordInst() */
 
-		DataType recordInst_def_dType = new DataType( "void", 0 );
+        /* define recordInst() */
 
-		// begin defining recordInst()
-		FuncType recordInst_def_funcType = new FuncType( recordInst_def_dType );
+        DataType recordInst_def_dType = new DataType("void", 0);
 
-		CodeBlock recordInst_codeBlock = new CodeBlock( "recordInstBody" );
+        // begin defining recordInst()
+        FuncType recordInst_def_funcType = new FuncType(recordInst_def_dType);
 
+        CodeBlock recordInst_codeBlock = new CodeBlock("recordInstBody");
 
-		/* recordInst() method's code block */
 
-		// create the statement 'counter = counter + 1';
-		ConstAst valueOfOne = new ConstAst( "1" );
+        /* recordInst() method's code block */
 
-		VarAccAst counterName2 = new VarAccAst( "counter" );
+        // create the statement 'counter = counter + 1';
+        ConstAst valueOfOne = new ConstAst("1");
 
-		VarAccAst counterName3 = new VarAccAst( "counter" );
+        VarAccAst counterName2 = new VarAccAst("counter");
 
-		ExprAst plusOp = new ExprAst( "+" );
+        VarAccAst counterName3 = new VarAccAst("counter");
 
-		AssignStat counterAssign2 = new AssignStat( "=" );
+        ExprAst plusOp = new ExprAst("+");
 
-		counterName2.InsertMeAsChildOf( counterAssign2, 0 );
+        AssignStat counterAssign2 = new AssignStat("=");
 
-		plusOp.InsertMeAsChildOf( counterAssign2, 1 );
+        counterName2.InsertMeAsChildOf(counterAssign2, 0);
 
-		counterName3.InsertMeAsChildOf( plusOp, 0 );
+        plusOp.InsertMeAsChildOf(counterAssign2, 1);
 
-		valueOfOne.InsertMeAsChildOf( plusOp, 1 );
+        counterName3.InsertMeAsChildOf(plusOp, 0);
 
-		// insert the statement 'counter = counter + 1' into the code block
-		counterAssign2.InsertMeAsChildOf( recordInst_codeBlock, 0 );
+        valueOfOne.InsertMeAsChildOf(plusOp, 1);
 
-		// attach the code block to the definition of the recordInst() method
-		FuncAst recordInst_definition = new FuncAst( "recordInst", StorageClass.AUTO, recordInst_def_funcType, recordInst_codeBlock);	
+        // insert the statement 'counter = counter + 1' into the code block
+        counterAssign2.InsertMeAsChildOf(recordInst_codeBlock, 0);
 
-		// attach the recordInst() method declaration node to the AST
-		recordInst_definition.InsertMeAsChildOf( fileNode, 4 );
+        // attach the code block to the definition of the recordInst() method
+        FuncAst recordInst_definition = new FuncAst("recordInst", StorageClass.AUTO, recordInst_def_funcType, recordInst_codeBlock);
 
+        // attach the recordInst() method declaration node to the AST
+        recordInst_definition.InsertMeAsChildOf(fileNode, 4);
 
-		// declare report()
-		VarAst reportDeclaration = AstBuilder.declareMethod( "report", "function", "void", 0 );
 
-		// insert the report() method declaration into the AST
-		reportDeclaration.InsertMeAsChildOf( fileNode, 5 );
+        // declare report()
+        VarAst reportDeclaration = AstBuilder.declareMethod("report", "function", "void", 0);
 
+        // insert the report() method declaration into the AST
+        reportDeclaration.InsertMeAsChildOf(fileNode, 5);
 
-		/* define report()*/
 
-		DataType report_def_dType = new DataType( "void", 0 );
+        /* define report()*/
 
-		FuncType report_def_ft = new FuncType( report_def_dType );
+        DataType report_def_dType = new DataType("void", 0);
 
-		CodeBlock report_CodeBlock = new CodeBlock( "reportBody" );
+        FuncType report_def_ft = new FuncType(report_def_dType);
 
+        CodeBlock report_CodeBlock = new CodeBlock("reportBody");
 
-		/* report() code block */
 
-		// create the statement 'printf("%d", counter);'
+        /* report() code block */
 
-		VarAccAst counterName4 = new VarAccAst( "counter" );
+        // create the statement 'printf("%d", counter);'
 
-		ConstAst reportFormat = new ConstAst( "\"instruction %d\"" );
+        VarAccAst counterName4 = new VarAccAst("counter");
 
-		VarAccAst printfName = new VarAccAst( "printf" );
+        ConstAst reportFormat = new ConstAst("\"instruction %d\"");
 
-		ExprStat printfCall = new ExprStat( "FuncCall" );
+        VarAccAst printfName = new VarAccAst("printf");
 
-		printfName.InsertMeAsChildOf( printfCall, 0 );
+        ExprStat printfCall = new ExprStat("FuncCall");
 
-		reportFormat.InsertMeAsChildOf( printfCall, 1 );
+        printfName.InsertMeAsChildOf(printfCall, 0);
 
-		counterName4.InsertMeAsChildOf( printfCall, 2 );
+        reportFormat.InsertMeAsChildOf(printfCall, 1);
 
-		// insert statement into the code block
-		printfCall.InsertMeAsChildOf( report_CodeBlock );
+        counterName4.InsertMeAsChildOf(printfCall, 2);
 
+        // insert statement into the code block
+        printfCall.InsertMeAsChildOf(report_CodeBlock);
 
-		// insert the code block into report() method definition
-		FuncAst report_definition = new FuncAst( "report", StorageClass.AUTO, report_def_ft, report_CodeBlock );
 
-		// insert report() definition into the AST
-		report_definition.InsertMeAsChildOf( fileNode, 6 );
-	}
+        // insert the code block into report() method definition
+        FuncAst report_definition = new FuncAst("report", StorageClass.AUTO, report_def_ft, report_CodeBlock);
 
+        // insert report() definition into the AST
+        report_definition.InsertMeAsChildOf(fileNode, 6);
+    }
 
-	/**
-	 *
-	 * Inserts a call to the method init() as the first statement in
-	 * the method main()
-	 *
-	 * Also calls the method insertReportCall() to insert the report() method
-	 * call
-	 *     
-	 ****************/
-	static void insertInitCall(AstNode node){
 
-		// using a stack to traverse the AST
-		Stack <AstNode> treeStack = new Stack <AstNode>();
+    /**
+     * Inserts a call to the method init() as the first statement in
+     * the method main()
+     * <p>
+     * Also calls the method insertReportCall() to insert the report() method
+     * call
+     ****************/
+    static void insertInitCall(AstNode node) {
 
-		treeStack.push(node);
+        // using a stack to traverse the AST
+        Stack<AstNode> treeStack = new Stack<AstNode>();
 
-		while(!treeStack.isEmpty()){
+        treeStack.push(node);
 
-			AstNode temp = treeStack.pop();
+        while (!treeStack.isEmpty()) {
 
-			// searching for the main() method definition
+            AstNode temp = treeStack.pop();
 
-			if( temp instanceof FuncAst && temp.GetNumChildren() != 0 && temp.GetNodeName().equals("main") )
-			{
-				// found the main() method definition, need to find the 1st code block inside of main()
+            // searching for the main() method definition
 
+            if (temp instanceof FuncAst && temp.GetNumChildren() != 0 && temp.GetNodeName().equals("main")) {
+                // found the main() method definition, need to find the 1st code block inside of main()
 
-				Enumeration mainChildren = temp.GetChildren();
-				AstNode child = (AstNode)mainChildren.nextElement();
 
-				while( !( child.getClass().getSimpleName().equals( "CodeBlock" ) ) )
-					child = (AstNode)mainChildren.nextElement();
+                Enumeration mainChildren = temp.GetChildren();
+                AstNode child = (AstNode) mainChildren.nextElement();
 
-				// child is the node that is the 1st code block of main()
+                while (!(child.getClass().getSimpleName().equals("CodeBlock")))
+                    child = (AstNode) mainChildren.nextElement();
 
-				// insert the call to init() as the first child of the code block node
+                // child is the node that is the 1st code block of main()
 
-				// init() call statement creation
-				ExprStat initFunctionCall = AstBuilder.createFunctionCall("init");
+                // insert the call to init() as the first child of the code block node
 
-				// attach the call to init() as the first child of the code block
-				initFunctionCall.InsertMeAsChildOf( child, 0 );
+                // init() call statement creation
+                ExprStat initFunctionCall = AstBuilder.createFunctionCall("init");
 
+                // attach the call to init() as the first child of the code block
+                initFunctionCall.InsertMeAsChildOf(child, 0);
 
-				// while inside of main we can insert the call to the report() method. 
-				// Have to find the return statement in the body of main() 
 
-				insertReportCall(temp);
-			}
+                // while inside of main we can insert the call to the report() method.
+                // Have to find the return statement in the body of main()
 
+                insertReportCall(temp);
+            }
 
-			Enumeration children = temp.GetChildren();
 
-			for(int i = 1; i <= temp.GetNumChildren(); i++){
+            Enumeration children = temp.GetChildren();
 
-				AstNode tempChild = (AstNode)children.nextElement();
+            for (int i = 1; i <= temp.GetNumChildren(); i++) {
 
-				treeStack.push(tempChild);		
-			}
-		}
-	}
+                AstNode tempChild = (AstNode) children.nextElement();
 
-	
-	/**
-	 *
-	 * Inserts a call to the method report() before the return statement 
-	 * inside main()
-	 *     
-	 ****************/
-	static void insertReportCall(AstNode node){
+                treeStack.push(tempChild);
+            }
+        }
+    }
 
-		// to traverse the AST use a stack to push and pop nodes
-		Stack< AstNode > treeStack = new Stack< AstNode >();
 
-		treeStack.push(node);
+    /**
+     * Inserts a call to the method report() before the return statement
+     * inside main()
+     ****************/
+    static void insertReportCall(AstNode node) {
 
-		while(!treeStack.isEmpty()){
+        // to traverse the AST use a stack to push and pop nodes
+        Stack<AstNode> treeStack = new Stack<AstNode>();
 
-			AstNode temp = treeStack.pop();
+        treeStack.push(node);
 
-			// searching for the return statement inside of main()
-			if(temp.getClass().getSimpleName().equals("ReturnStat")){
+        while (!treeStack.isEmpty()) {
 
-				// return statement found
-				// temp is the node for the return statement
+            AstNode temp = treeStack.pop();
 
-				// create a call to the report() function
-				ExprStat reportCall = AstBuilder.createFunctionCall("report");
+            // searching for the return statement inside of main()
+            if (temp.getClass().getSimpleName().equals("ReturnStat")) {
 
-				// insert the call to report() right before the return statement
-				reportCall.InsertMeBefore(temp);
-			}
+                // return statement found
+                // temp is the node for the return statement
 
-			Enumeration children = temp.GetChildren();
+                // create a call to the report() function
+                ExprStat reportCall = AstBuilder.createFunctionCall("report");
 
-			for( int i = 1; i <= temp.GetNumChildren(); i++ ){
+                // insert the call to report() right before the return statement
+                reportCall.InsertMeBefore(temp);
+            }
 
-				AstNode tempChild = (AstNode)children.nextElement();
+            Enumeration children = temp.GetChildren();
 
-				treeStack.push(tempChild);		
-			}
-		}
-	}
+            for (int i = 1; i <= temp.GetNumChildren(); i++) {
 
+                AstNode tempChild = (AstNode) children.nextElement();
 
-	/**
-	 *  
-	 * Inserts a call to the method recordInst() before any
-	 * assignment, goto or expression statement. 
-	 *     
-	 ****************/
+                treeStack.push(tempChild);
+            }
+        }
+    }
 
-	static void insertRecordInstCall(AstNode node){
 
-		// Traverse the AST by using a stack to push and pop the nodes
-		Stack< AstNode > treeStack = new Stack< AstNode >();
+    /**
+     * Inserts a call to the method recordInst() before any
+     * assignment, goto or expression statement.
+     ****************/
 
-		treeStack.push(node);
+    static void insertRecordInstCall(AstNode node) {
 
-		while(!treeStack.isEmpty()){
+        // Traverse the AST by using a stack to push and pop the nodes
+        Stack<AstNode> treeStack = new Stack<AstNode>();
 
-			AstNode temp = treeStack.pop();
+        treeStack.push(node);
 
-			// insert a call to the recordInst() method only before
-			// assignment, goto and expression statements
+        while (!treeStack.isEmpty()) {
 
-			if(temp instanceof AssignStat 
-					|| temp instanceof GotoStat 
-					|| temp instanceof ExprStat){
+            AstNode temp = treeStack.pop();
 
+            // insert a call to the recordInst() method only before
+            // assignment, goto and expression statements
 
-				/*** create a recordInst() call statement  ***/
-				VarAccAst recordInstName = new VarAccAst("recordInst");
+            if (temp instanceof AssignStat
+                    || temp instanceof GotoStat
+                    || temp instanceof ExprStat) {
 
-				ExprStat recordInstCall = new ExprStat("FuncCall");
 
-				recordInstName.InsertMeAsChildOf(recordInstCall);
+                /*** create a recordInst() call statement  ***/
+                VarAccAst recordInstName = new VarAccAst("recordInst");
 
-				// insert the recordInst() method call before the found
-				// assignment, goto or expression statement
+                ExprStat recordInstCall = new ExprStat("FuncCall");
 
-				recordInstCall.InsertMeBefore(temp);
+                recordInstName.InsertMeAsChildOf(recordInstCall);
 
-			}
+                // insert the recordInst() method call before the found
+                // assignment, goto or expression statement
 
-			Enumeration children = temp.GetChildren();
+                recordInstCall.InsertMeBefore(temp);
 
-			for(int i = 1; i <= temp.GetNumChildren(); i++){
+            }
 
-				AstNode tempChild = (AstNode)children.nextElement();
+            Enumeration children = temp.GetChildren();
 
-				treeStack.push(tempChild);		
-			}
-		}
-	}
+            for (int i = 1; i <= temp.GetNumChildren(); i++) {
 
+                AstNode tempChild = (AstNode) children.nextElement();
 
-	/**
-	 * 
-	 *  This method just prints the AST in a readable fashion 
-	 *  
-	 ****************/
-	static void printTree(AstNode node) throws AssertionError {
+                treeStack.push(tempChild);
+            }
+        }
+    }
 
-		Stack <AstNode> treeStack = new Stack <AstNode>();
-		Stack <AstNode> treeRestack = new Stack <AstNode>();
 
-		treeRestack.push(node);
+    /**
+     * This method just prints the AST in a readable fashion
+     ****************/
+    static void printTree(AstNode node) throws AssertionError {
 
-		while(!treeRestack.isEmpty()){
+        Stack<AstNode> treeStack = new Stack<AstNode>();
+        Stack<AstNode> treeRestack = new Stack<AstNode>();
 
-			AstNode temp = treeRestack.pop();
+        treeRestack.push(node);
 
-			System.out.println("PARENT: " + temp.GetNodeName());
-			System.out.println("adap: " + temp.getClass().getSimpleName());
+        while (!treeRestack.isEmpty()) {
 
-			//System.out.println("# Children: " + temp.GetNumChildren());
+            AstNode temp = treeRestack.pop();
 
-			Enumeration children = temp.GetChildren();
+            System.out.println("PARENT: " + temp.GetNodeName());
+            System.out.println("adap: " + temp.getClass().getSimpleName());
 
-			for(int i = 1; i <= temp.GetNumChildren(); i++){
+            //System.out.println("# Children: " + temp.GetNumChildren());
 
-				AstNode tempChild = (AstNode)children.nextElement();
-				System.out.println("      CHILD " + i + ": " + tempChild.GetNodeName());
-				treeStack.push(tempChild);		
-			}
-			System.out.println();
+            Enumeration children = temp.GetChildren();
 
-			while(!treeStack.empty())
-				treeRestack.push(treeStack.pop());	
-		}			
-	}
-	
-	
-	/**
-	 * 
-	 * Traverses and prints the AST recursively
-	 * 
-	 ****************/
-	protected static void recursivePrintTree(AstNode node) throws AssertionError
-	{
-		int numChildren = node.GetNumChildren();
-		Enumeration children = node.GetChildren();
-		
-		// base case
-		if(numChildren == 0)
-		{
-			System.out.println( "Parent: " + node.GetNodeName() );
-			System.out.println( "adap:" + node.getClass().getSimpleName() );
-		}
-		else
-		{
-			System.out.println( "Parent: " + node.GetNodeName() );
-			System.out.println( "adap:" + node.getClass().getSimpleName() );
-			
-			for( int k = 1; k <= numChildren; k++ )
-			{
-				AstNode child = (AstNode)children.nextElement();
-				System.out.println( "    CHILD " + k + ": "+ child.GetNodeName() );
-				//recursivePrintTree(child);
-			}
-			
-			Enumeration childrenAgain = node.GetChildren();
-			
-			for( int k = 1; k <= numChildren; k++ )
-			{
-				AstNode child = (AstNode)childrenAgain.nextElement();
-				recursivePrintTree(child);
-			}
-		}
-	}
+            for (int i = 1; i <= temp.GetNumChildren(); i++) {
+
+                AstNode tempChild = (AstNode) children.nextElement();
+                System.out.println("      CHILD " + i + ": " + tempChild.GetNodeName());
+                treeStack.push(tempChild);
+            }
+            System.out.println();
+
+            while (!treeStack.empty())
+                treeRestack.push(treeStack.pop());
+        }
+    }
+
+
+    /**
+     * Traverses and prints the AST recursively
+     ****************/
+    protected static void recursivePrintTree(AstNode node) throws AssertionError {
+        int numChildren = node.GetNumChildren();
+        Enumeration children = node.GetChildren();
+
+        // base case
+        if (numChildren == 0) {
+            System.out.println("Parent: " + node.GetNodeName());
+            System.out.println("adap:" + node.getClass().getSimpleName());
+        } else {
+            System.out.println("Parent: " + node.GetNodeName());
+            System.out.println("adap:" + node.getClass().getSimpleName());
+
+            for (int k = 1; k <= numChildren; k++) {
+                AstNode child = (AstNode) children.nextElement();
+                System.out.println("    CHILD " + k + ": " + child.GetNodeName());
+                //recursivePrintTree(child);
+            }
+
+            Enumeration childrenAgain = node.GetChildren();
+
+            for (int k = 1; k <= numChildren; k++) {
+                AstNode child = (AstNode) childrenAgain.nextElement();
+                recursivePrintTree(child);
+            }
+        }
+    }
 }
