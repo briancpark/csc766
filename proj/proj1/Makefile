@@ -8,7 +8,7 @@ AST_LIB_PATH = ./AST_lib/src/
 CLASSPATH = ${AST_LIB_PATH}:${COMP_CLASS_DIR}
 JAVAC = javac
 JAVA = java
-JAVAC_FLAGS = -source 1.5 -d ${COMP_CLASS_DIR} -classpath ${CLASSPATH}
+JAVAC_FLAGS = -d ${COMP_CLASS_DIR} -classpath ${CLASSPATH}
 JAVA_FLAGS = -ea -classpath ${CLASSPATH}
 
 
