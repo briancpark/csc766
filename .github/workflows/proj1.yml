@@ -1,0 +1,21 @@
+name: proj1
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: make build
+      run: cd proj/proj1 && make build
+    - name: make compile
+      run: cd proj/proj1 && make compile
+    - name: make run
+      run: cd proj/proj1 && make run
