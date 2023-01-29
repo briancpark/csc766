@@ -16,15 +16,18 @@ jobs:
     - name: make build
       run: |
         cd proj/proj1
+        make clean
         make build
     - name: make compile
       run: |
         cd proj/proj1
+        make clean
         make build
         make compile
     - name: make run
       run: |
         cd proj/proj1
+        make clean
         make build
         make compile
         make run
