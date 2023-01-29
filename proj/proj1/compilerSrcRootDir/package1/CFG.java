@@ -5,11 +5,10 @@ import java.util.List;
 
 public class CFG {
 
-    // indicates which function this is a CFG for
-    private String functionName;
-
     // the list of basic blocks that make up this CFG
     private final List<BasicBlock> controlFlow;
+    // indicates which function this is a CFG for
+    private String functionName;
 
     // constructor
     public CFG(String name) {

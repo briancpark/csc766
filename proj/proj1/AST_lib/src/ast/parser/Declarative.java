@@ -7,9 +7,7 @@
 package ast.parser;
 
 /**
- *
- * @author  administrator
- * @version 
+ * @author administrator
  */
 public interface Declarative {
 

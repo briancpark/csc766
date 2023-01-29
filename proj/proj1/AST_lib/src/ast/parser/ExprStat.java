@@ -5,26 +5,26 @@
  */
 
 package ast.parser;
-import java.io.*;
-import tools.*;
 
 /**
- *
- * @author  administrator
- * @version 
+ * @author administrator
  */
 public class ExprStat extends ExprAst {
 
-    /** Creates new ExprStat */
-    public ExprStat(String nm) throws AssertionError {super(nm);}
-    
-    public String DumpAdap() throws AssertionError {       
-        String str = "("+ ExprStatLabel;
+    /**
+     * Creates new ExprStat
+     */
+    public ExprStat(String nm) throws AssertionError {
+        super(nm);
+    }
+
+    public String DumpAdap() throws AssertionError {
+        String str = "(" + ExprStatLabel;
         str += OperandsDumpAdap();
         str += ")\n";
         return str;
     }
-    
+
     public String DumpC() throws AssertionError {
         String str = super.DumpC();
         return str + ";\n";

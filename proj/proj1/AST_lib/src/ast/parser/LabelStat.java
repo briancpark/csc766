@@ -1,16 +1,16 @@
 package ast.parser;
 
-import ast.scanner.*;
-import tools.*;
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import ast.scanner.OldScanner;
+
+import java.io.IOException;
 
 /* (LabelStat label_name) */
 
 public class LabelStat extends StatAst {
-    public LabelStat(String nm) {super(nm);}
-    
+    public LabelStat(String nm) {
+        super(nm);
+    }
+
     void ReadProgram(OldScanner scanner) throws IOException, AssertionError {
         scanner.MatchSym(")");
     }

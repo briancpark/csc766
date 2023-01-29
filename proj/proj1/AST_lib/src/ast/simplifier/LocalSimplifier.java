@@ -7,21 +7,20 @@
 package ast.simplifier;
 
 import ast.parser.*;
-import tools.*;
-import java.lang.*;
-import java.util.*;
+
+import java.util.Enumeration;
 
 /**
- *
- * @author  administrator
- * @version 
+ * @author administrator
  */
 public class LocalSimplifier extends Object {
 
-    /** Creates new LocalSimplifier */
+    /**
+     * Creates new LocalSimplifier
+     */
     public LocalSimplifier() {
     }
-    
+
     static AstNode Evaluate(AstNode expr) throws AssertionError {
         if (!(expr instanceof OperatorAst)) return expr;
         OperatorAst oa = (OperatorAst) expr;
@@ -37,23 +36,23 @@ public class LocalSimplifier extends Object {
             return expr;
         String op = oa.GetOperator().GetOpName();
         Integer np = Calculate(op, c1.GetIntConst(), c2.GetIntConst());
-        if (np==null) return expr;
+        if (np == null) return expr;
         // return an constant
         ConstAst nexpr = new ConstAst(String.valueOf(np));
         nexpr.InsertMeBefore(expr);
         expr.DetachMe();
         return nexpr;
     }
-    
+
     static Integer Calculate(String opnm, int i, int j) {
-        if (opnm.compareTo("+")==0) 
-            return new Integer(i+j);
-        if (opnm.compareTo("-")==0) 
-            return new Integer(i-j);
-        if (opnm.compareTo("*")==0) 
-            return new Integer(i*j);
-        if (opnm.compareTo("/")==0) 
-            return new Integer(i/j);
+        if (opnm.compareTo("+") == 0)
+            return new Integer(i + j);
+        if (opnm.compareTo("-") == 0)
+            return new Integer(i - j);
+        if (opnm.compareTo("*") == 0)
+            return new Integer(i * j);
+        if (opnm.compareTo("/") == 0)
+            return new Integer(i / j);
         return null;
     }
 
@@ -65,26 +64,26 @@ public class LocalSimplifier extends Object {
             Addressable lft = as.GetLeftHandOp();
             AstNode nn = Evaluate((AstNode) as.GetRightHandOp());
             if ((nn instanceof Addressable) && lft.equals((Addressable) nn)) {
-                    code.DetachMe();
-                    return null;
+                code.DetachMe();
+                return null;
             }
         }
         if (code instanceof ExprAst) {
             // Remove (1*A), (A*1), (A/1)
             AstNode nn = Evaluate(code);
-            if (nn instanceof ExprAst 
-                && ((ExprAst)nn).GetNumOperands()==2) {
+            if (nn instanceof ExprAst
+                    && ((ExprAst) nn).GetNumOperands() == 2) {
                 ExprAst n1 = (ExprAst) nn;
                 boolean leftOk = false, rightOk = false;
                 if (n1.GetOperand(0) instanceof ConstAst &&
-                    ((ConstAst)n1.GetOperand(0)).IsIntConst() &&
-                    ((ConstAst)n1.GetOperand(0)).GetIntConst()==1) 
+                        ((ConstAst) n1.GetOperand(0)).IsIntConst() &&
+                        ((ConstAst) n1.GetOperand(0)).GetIntConst() == 1)
                     leftOk = true;
                 if (n1.GetOperand(1) instanceof ConstAst &&
-                    ((ConstAst)n1.GetOperand(1)).IsIntConst() &&
-                    ((ConstAst)n1.GetOperand(1)).GetIntConst()==1) 
+                        ((ConstAst) n1.GetOperand(1)).IsIntConst() &&
+                        ((ConstAst) n1.GetOperand(1)).GetIntConst() == 1)
                     rightOk = true;
-                if (n1.GetOperator().GetOpName().compareTo("*")==0) {
+                if (n1.GetOperator().GetOpName().compareTo("*") == 0) {
                     if (leftOk) {
                         AstNode newd = (AstNode) n1.GetOperand(1);
                         newd.MoveMeBefore(n1);
@@ -100,7 +99,7 @@ public class LocalSimplifier extends Object {
                         return newd;
                     }
                 }
-                if (n1.GetOperator().GetOpName().compareTo("/")==0) {
+                if (n1.GetOperator().GetOpName().compareTo("/") == 0) {
                     if (rightOk) {
                         AstNode newd = (AstNode) n1.GetOperand(0);
                         newd.MoveMeBefore(n1);
@@ -109,23 +108,23 @@ public class LocalSimplifier extends Object {
                         return newd;
                     }
                 }
-            }  
+            }
         }// end OperatorAst
-        
+
         // Remove consecutive (& (*))s.
         if (code instanceof UopAcc) {
-            AstNode base = (AstNode) ((UopAcc)code).GetBase();
+            AstNode base = (AstNode) ((UopAcc) code).GetBase();
             if (base instanceof UopAcc) {
-                if (code.GetNodeName().compareTo(base.GetNodeName())!=0) {
+                if (code.GetNodeName().compareTo(base.GetNodeName()) != 0) {
                     // Must be one & and one *
-                    AstNode newnode = (AstNode) ((UopAcc)base).GetBase();
+                    AstNode newnode = (AstNode) ((UopAcc) base).GetBase();
                     newnode.MoveMeBefore(code);
                     code.DetachMe();
                     code = newnode;
                 }
             }
         }
-        
+
         // Simplify children
         Enumeration chds = code.GetChildren();
         while (chds.hasMoreElements()) {

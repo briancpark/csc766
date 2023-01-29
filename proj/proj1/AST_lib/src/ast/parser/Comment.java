@@ -6,30 +6,34 @@
 
 package ast.parser;
 
-import ast.scanner.*;
-import tools.*;
-import java.lang.*;
-import java.io.*;
-import java.util.*;
+import ast.scanner.IDToken;
+import ast.scanner.OldScanner;
+import ast.scanner.StringToken;
+import tools.StringTools;
+
+import java.io.IOException;
 
 /**
- *
- * @author  administrator
- * @version 
+ * @author administrator
  */
 public class Comment extends AstNode implements Declarative {
     String comment;
+
+    Comment(String vnm) {
+        super(vnm);
+    }
+
+    public Comment(String vnm, String dt)
+            throws AssertionError {
+        super(vnm);
+        comment = dt;
+    }
+
     public String GetComment() throws AssertionError {
-        assert comment!=null; 
+        assert comment != null;
         return comment;
     }
-    
-    Comment(String vnm) {super(vnm);}
-    public Comment(String vnm, String dt) 
-            throws AssertionError {
-        super(vnm); comment = dt; 
-    }
-        
+
     void ReadProgram(OldScanner scanner) throws IOException, AssertionError {
         StringToken ct = (StringToken) scanner.GetNextToken();
         comment = ct.GetString();
@@ -40,14 +44,14 @@ public class Comment extends AstNode implements Declarative {
         }
         assert (scanner.MatchSym(")"));
     }
-    
-    public String DumpAdap() throws AssertionError  {
+
+    public String DumpAdap() throws AssertionError {
         comment = StringTools.AddQuotationMarks(comment);
-        return " ( " + CommentLabel + " " + nodeName + " " + comment+")\n";
+        return " ( " + CommentLabel + " " + nodeName + " " + comment + ")\n";
     }
-    
+
     public String DumpC() throws AssertionError {
-        return " /* " + nodeName + " " + comment +"*/\n";
+        return " /* " + nodeName + " " + comment + "*/\n";
     }
-        
+
 }

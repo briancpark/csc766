@@ -6,16 +6,10 @@
 
 package ast.parser;
 
-import java.io.*;
-import java.lang.*;
-import tools.*;
-
 /**
- *
- * @author  Chen Ding
- * @version 
+ * @author Chen Ding
  * @description Accessible through a memory address.  Constants are caculable, but
- *  not addressable.
+ * not addressable.
  */
 public interface Addressable extends Calculable {
     boolean equals(Addressable a2) throws AssertionError;

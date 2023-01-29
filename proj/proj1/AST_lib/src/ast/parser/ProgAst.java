@@ -1,15 +1,18 @@
 package ast.parser;
 
-import ast.scanner.*;
-import tools.*;
-import java.lang.*;
-import java.io.*;
-import java.util.*;
-import ast.simplifier.*;
+import ast.scanner.OldScanner;
+import ast.scanner.StringToken;
+import ast.simplifier.LocalSimplifier;
+import tools.StringTools;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 
 public class ProgAst extends SegAst {
     public ProgAst(String pnm) throws AssertionError {
-        super(pnm);  
+        super(pnm);
         PrimitiveType it = new PrimitiveType("int");
         typeTable.put("int", it);
         it = new PrimitiveType("char");
@@ -38,115 +41,26 @@ public class ProgAst extends SegAst {
         typeTable.put("long int", it);
         it = new PrimitiveType("long long int");
         typeTable.put("long long int", it);
-        
+
         // Dummy type so that function names can enter symbol table
         //it = new PrimitiveType("function");
         //typeTable.put("function", it);
         DataType ret = new DataType(voidtyp, 0);
         FuncType dummy = new FuncType(ret);
         typeTable.put("dummy", dummy);
-        symbolTable.put("printf", new VarAst("printf", 
-                    new DataType(dummy, 0)));
-        
+        symbolTable.put("printf", new VarAst("printf",
+                new DataType(dummy, 0)));
+
         // Read the program
         try {
             ReadProgram(pnm);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.err.println("Exception caught: " + e.getMessage());
             e.printStackTrace(System.err);
-            System.err.println("Intermediate-Format Reading Error in program "+
-                        pnm + ".");
-        }            
-    }
-    
-    void ReadProgram(OldScanner scanner) throws IOException, AssertionError {
-         // Wrong interface              
-         throw new AssertionError();
-    }
-    
-    void ReadProgram(String fullFileName) throws IOException, AssertionError {
-                        
-        // Set the working directory to be this directory
-        String wdir = StringTools.GetDirectoryName(fullFileName);
-        if (wdir==null) wdir = System.getProperty("user.dir")+"/";
-        //assert (wdir!=null);
-        InsertAttribute("WorkingDirectory", new Comment(wdir));
-        
-        // Start reading file
-        OldScanner scanner = new OldScanner(fullFileName);
-        // Initialize file
-        assert (scanner.MatchSym("("));
-        StringToken ftype = (StringToken) scanner.GetNextToken();
-        if (ftype.GetString().compareTo(ProgAstLabel)!=0) {
-            // A single file program
-            nodeName = ((StringToken) scanner.GetNextToken()).GetString();
-            FileAst f = new FileAst(nodeName);
-            // ImportFile will use the f as the parent for its children
-            f.ReadProgram(fullFileName);
-            AddChild(f);
-        }
-        else {
-            // A program file with a list of ImportFile nodes
-            nodeName = ((StringToken) scanner.GetNextToken()).GetString();        
-            assert (scanner.MatchID("Begin"));
-            assert (scanner.MatchSym(")"));        
-
-            // Read statements from file
-            AstNode nn;
-            for (nn = ReadNextAstNode(scanner); 
-                 nn instanceof ImportFile;
-                 nn = ReadNextAstNode(scanner)) {
-              ((ImportFile)nn).ReadProgram(scanner, wdir);
-              assert (((ImportFile)nn).GetNumChildren()==1 
-                                && ((ImportFile)nn).GetChild(0) instanceof FileAst);
-              nn.GetChild(0).MoveMeAsChildOf(this);        
-            }
-
-            // End of program file (nn instanceof PorgAst)
-            assert (nn == null);
-            assert (scanner.MatchID("End"));
-            // delete nn, nt;
-            assert (scanner.MatchSym(")"));
-            
-            LocalSimplifier.Simplify(this);
-        }
-        
-        try {
-            CheckConsistency();
-        }
-        catch (Exception e) {
-            System.err.println(e.getMessage() + ". Consistency check failed.");
-            e.printStackTrace(System.err);
+            System.err.println("Intermediate-Format Reading Error in program " +
+                    pnm + ".");
         }
     }
-
-    
-    
-  
-    public void Dump() throws IOException, AssertionError {
-        PrintStream fout = new PrintStream(new FileOutputStream
-                            (new File(GetWorkingDirectory()+"prog.adap")));
-        Dump(fout);
-    }
-  public String DumpAdap() throws AssertionError {
-    String str = "( "+ ProgAstLabel + " " + nodeName + " Begin )";
-    for (int i=0; i<GetNumChildren(); i++) {
-        FileAst f = (FileAst) GetChild(i);
-        str += "( " + ImportFileLabel + " " + f.GetNodeName()+ ")\n";
-        str += f.DumpAdap();
-    }
-    str += "( "+ ProgAstLabel + " " + nodeName + " End )\n";
-    return str;
-  }
-
-  public void GenCode() throws IOException, AssertionError {
-    FileAst f;
-    for (int i=0; i<GetNumChildren(); i++) {
-        f = (FileAst) GetChild(i);
-        f.GenCode();
-    }
-  }
 
     public static void main(String[] args) throws IOException, AssertionError {
         // ProgAst prog = new ProgAst("C:/Adap/tests/qsort/all.adap");
@@ -161,4 +75,88 @@ public class ProgAst extends SegAst {
         prog.Dump();
     }
 
-  }
+    void ReadProgram(OldScanner scanner) throws IOException, AssertionError {
+        // Wrong interface
+        throw new AssertionError();
+    }
+
+    void ReadProgram(String fullFileName) throws IOException, AssertionError {
+
+        // Set the working directory to be this directory
+        String wdir = StringTools.GetDirectoryName(fullFileName);
+        if (wdir == null) wdir = System.getProperty("user.dir") + "/";
+        //assert (wdir!=null);
+        InsertAttribute("WorkingDirectory", new Comment(wdir));
+
+        // Start reading file
+        OldScanner scanner = new OldScanner(fullFileName);
+        // Initialize file
+        assert (scanner.MatchSym("("));
+        StringToken ftype = (StringToken) scanner.GetNextToken();
+        if (ftype.GetString().compareTo(ProgAstLabel) != 0) {
+            // A single file program
+            nodeName = ((StringToken) scanner.GetNextToken()).GetString();
+            FileAst f = new FileAst(nodeName);
+            // ImportFile will use the f as the parent for its children
+            f.ReadProgram(fullFileName);
+            AddChild(f);
+        } else {
+            // A program file with a list of ImportFile nodes
+            nodeName = ((StringToken) scanner.GetNextToken()).GetString();
+            assert (scanner.MatchID("Begin"));
+            assert (scanner.MatchSym(")"));
+
+            // Read statements from file
+            AstNode nn;
+            for (nn = ReadNextAstNode(scanner);
+                 nn instanceof ImportFile;
+                 nn = ReadNextAstNode(scanner)) {
+                ((ImportFile) nn).ReadProgram(scanner, wdir);
+                assert (((ImportFile) nn).GetNumChildren() == 1
+                        && ((ImportFile) nn).GetChild(0) instanceof FileAst);
+                nn.GetChild(0).MoveMeAsChildOf(this);
+            }
+
+            // End of program file (nn instanceof PorgAst)
+            assert (nn == null);
+            assert (scanner.MatchID("End"));
+            // delete nn, nt;
+            assert (scanner.MatchSym(")"));
+
+            LocalSimplifier.Simplify(this);
+        }
+
+        try {
+            CheckConsistency();
+        } catch (Exception e) {
+            System.err.println(e.getMessage() + ". Consistency check failed.");
+            e.printStackTrace(System.err);
+        }
+    }
+
+    public void Dump() throws IOException, AssertionError {
+        PrintStream fout = new PrintStream(new FileOutputStream
+                (new File(GetWorkingDirectory() + "prog.adap")));
+        Dump(fout);
+    }
+
+    public String DumpAdap() throws AssertionError {
+        String str = "( " + ProgAstLabel + " " + nodeName + " Begin )";
+        for (int i = 0; i < GetNumChildren(); i++) {
+            FileAst f = (FileAst) GetChild(i);
+            str += "( " + ImportFileLabel + " " + f.GetNodeName() + ")\n";
+            str += f.DumpAdap();
+        }
+        str += "( " + ProgAstLabel + " " + nodeName + " End )\n";
+        return str;
+    }
+
+    public void GenCode() throws IOException, AssertionError {
+        FileAst f;
+        for (int i = 0; i < GetNumChildren(); i++) {
+            f = (FileAst) GetChild(i);
+            f.GenCode();
+        }
+    }
+
+}

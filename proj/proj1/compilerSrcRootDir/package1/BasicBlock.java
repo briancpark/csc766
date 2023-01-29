@@ -7,21 +7,17 @@ import java.util.List;
 
 public class BasicBlock {
 
-    // name of the block
-    private String blockName;
-
-    // label that the block ends with
-    private String endLabel;
-
-    // label that the block starts with
-    private String startLabel;
-
     // successors and predecessors of the basic block
     private final List<String> succ;
     private final List<String> pred;
-
     // statements of the basic block
     private final List<AstNode> statements = new ArrayList<AstNode>(10);
+    // name of the block
+    private String blockName;
+    // label that the block ends with
+    private String endLabel;
+    // label that the block starts with
+    private String startLabel;
 
     // constructor
     public BasicBlock(String bName) {

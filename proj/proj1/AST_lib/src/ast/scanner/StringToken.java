@@ -1,15 +1,20 @@
 package ast.scanner;
-import java.io.*;
+
+import java.io.IOException;
+import java.io.PrintStream;
 
 public class StringToken extends Token {
-  private String str;
-  public StringToken(String _string) {
-    str = _string;
-  }
+    private String str;
 
-  public String GetString() {return str;}
+    public StringToken(String _string) {
+        str = _string;
+    }
 
-  public void PrintToken(PrintStream outputFile) throws IOException {
-    outputFile.print(str);
-  }
+    public String GetString() {
+        return str;
+    }
+
+    public void PrintToken(PrintStream outputFile) throws IOException {
+        outputFile.print(str);
+    }
 }
