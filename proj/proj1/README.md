@@ -5,6 +5,8 @@ Brian Park
 Here lies the README.md for the project. Feel free to view the Markdown file in a text editor or browser to properly
 render the formatting. Otherwise, viewing the raw text should suffice.
 
+
+## Building and Running the Project
 To compile and run the code, it should be the commands below. There was nothing changed compared to the original starter
 code.
 
@@ -14,13 +16,43 @@ make build
 make run
 ```
 
-The starter code in this repository will look different as it has been linted and reformatted.
+## File and Directory Descriptions
+The starter code in this repository will look different as it has been linted and reformatted. To show the difference, here is the `git diff`:
+```diff
+briancpark@Brians-MBP proj1 % git diff --stat
+ proj/proj1/Makefile                                            |   2 +-
+ proj/proj1/README.md                                           |   6 +++-
+ proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 127 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++++++
+ 4 files changed, 151 insertions(+), 3 deletions(-)
+```
 
-To show the difference, here is the git diff
+## Design Document
 
-Below are the versions used. (on Mac)
+The codebase was modified to add support for redudancy elimination via value numbering on the control flow graph. To 
+accomplish this, I added a subroutine `valueNumbering(prog)` to the `OptimizingCompiler` class. This subroutine first
+computes the two hash tables required for value numbering, `valueNumberTable` and `rewrittenTable`. This was only down
+at a basic block level, so I added two more functions, `valueNumbering` and `rewrite` to the `BasicBlock` class.
+
+## Optimizations: Value Numbering
+
+## Debugging and Other Notes
+This is some other notes included for my own sanity and development.
+
+### Java Version
+Below are the versions used on macOS (Apple Silicon):
+```
 java version "19" 2022-09-20
 javac 19
+```
+
+On VCL, the versions are as follows:
+```
+```
+
+### IntelliJ Setup
+
+
 
 If there is any error or issue with the setup, please contact [bcpark@ncsu.edu](mailto:bcpark@ncsu.edu).
 
@@ -32,14 +64,7 @@ Check it out here and use it as a start point of your whole project. Read the RE
 used for testing: the Linux systems in the NCSU VCL (use the "CSC 766 Code Optimization" image, which will be used in
 our grading).
 
-You must include a Readme file in which you should mention your name and the phase number first. Extra info should be
-presented are
 
-* file and directory descriptions
-* building and running guide
-* program descriptions, on structure and function
-* descriptions of your optimizations
-* bug reports
 
 ```
 Executing automaton

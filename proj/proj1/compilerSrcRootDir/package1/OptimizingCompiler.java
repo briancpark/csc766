@@ -51,6 +51,9 @@ public class OptimizingCompiler {
             // construct a CFG for each function in the program
             constructCFG(prog);
 
+            // Phase 3
+            // Perform redundancy elimination via value numbering on the CFG
+//            valueNumbering(prog);
 
             // Phase 1
             // insert calls to recordInst() method into the Abstract Syntax Tree
@@ -86,6 +89,22 @@ public class OptimizingCompiler {
             out.close();
         } catch (IOException e) {
             System.err.println("Failed to generate output file.");
+        }
+    }
+
+    public static void valueNumbering(AstNode node) {
+        // Store values into a value number table
+        for (CFG c : programFlow) {
+            for (BasicBlock b : c.getFunctionCFG()) {
+                b.valueNumbering();
+            }
+        }
+
+        // Rewrite the AST with the value number table
+        for (CFG c : programFlow) {
+            for (BasicBlock b : c.getFunctionCFG()) {
+                b.rewrite();
+            }
         }
     }
 
