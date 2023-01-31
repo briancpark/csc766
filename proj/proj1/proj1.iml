@@ -8,6 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="AST_lib" />
+    <orderEntry type="library" name="src" level="project" />
+    <orderEntry type="library" name="compilerSrcRootDir" level="project" />
   </component>
 </module>

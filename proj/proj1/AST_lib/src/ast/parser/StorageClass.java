@@ -19,6 +19,7 @@ public class StorageClass extends Object {
     public static final StorageClass STATIC = new StorageClass("static");
     public static final StorageClass REGISTER = new StorageClass("register");
     private String name;
+
     /**
      * Creates new StorageClass
      */

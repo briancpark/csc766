@@ -22,16 +22,15 @@ INPUT_PROG = automaton binrep fibonacci jacobi mandel movingedge multiply sort s
 #INPUT_PROG = array
 #INPUT_PROG = function
 #INPUT_PROG = expression
-
-#INPUT_PRGO = binrep
+#INPUT_PROG = binrep
 #INPUT_PROG = mandel
 #INPUT_PROG = fibonacci
 #INPUT_PROG = automaton
 #INPUT_PROG = trivia
-#INPUT_PRGO = tax
+#INPUT_PROG = tax
 #INPUT_PROG = sort_insertion
 #INPUT_PROG = sort
-#IPNUT_PRGO = multiply
+#INPUT_PROG = multiply
 #INPUT_PROG = movingedge
 #INPUT_PROG = jacobi
 
