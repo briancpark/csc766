@@ -53,7 +53,7 @@ public class OptimizingCompiler {
 
             // Phase 3
             // Perform redundancy elimination via value numbering on the CFG
-//            valueNumbering(prog);
+            valueNumbering(prog);
 
             // Phase 1
             // insert calls to recordInst() method into the Abstract Syntax Tree

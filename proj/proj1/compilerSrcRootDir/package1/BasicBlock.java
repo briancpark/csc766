@@ -20,8 +20,8 @@ public class BasicBlock {
     private String endLabel;
     // label that the block starts with
     private String startLabel;
-    private HashMap<String, Integer> valueNumberTable;
-    private HashMap<Integer, AstNode> rewrittenTable;
+    private final HashMap<String, Integer> valueNumberTable;
+    private final HashMap<Integer, AstNode> rewrittenTable;
 
     // constructor
     public BasicBlock(String bName) {
@@ -79,12 +79,14 @@ public class BasicBlock {
                 List<AstNode> statementChildren = Collections.list(statement.GetChildren());
                 assert statementChildren.size() == 2;
 
-                // Process the expression
+                AstNode var = statementChildren.get(0);
                 AstNode expr = statementChildren.get(1);
+                // Process the expression
+
                 AstNode left = null, right = null;
                 int exprValueNumber, leftValueNumber = -1, rightValueNumber = -1;
 
-                if (expr instanceof ExprAst || expr.GetNodeName() != "FuncCall") {
+                if (expr instanceof ExprAst && !(var instanceof ArrayAcc) && !expr.GetNodeName().equals("FuncCall")) {
                     List<AstNode> exprChildren = Collections.list(expr.GetChildren());
 
                     left = exprChildren.get(0);
@@ -114,9 +116,14 @@ public class BasicBlock {
                             }
                         }
                     }
-                } else if (expr instanceof ArrayAcc ) {
-                    System.out.println("TEST");
-                    //TODO: Handle array access
+                } else if (expr instanceof ArrayAcc) {
+                    if (valueNumberTable.containsKey(expr.DumpC())) {
+                        leftValueNumber = valueNumberTable.get(expr.DumpC());
+                    } else {
+                        leftValueNumber = valueNumber++;
+                        valueNumberTable.put(expr.DumpC(), leftValueNumber);
+                        rewrittenTable.put(leftValueNumber, expr);
+                    }
                 } else if (expr instanceof VarAccAst || expr instanceof ConstAst) {
                     left = expr;
                     if (valueNumberTable.containsKey(left.DumpC())) {
@@ -130,11 +137,10 @@ public class BasicBlock {
 
                 String valueNumberID = String.valueOf(leftValueNumber);
                 if (rightValueNumber != -1) {
-                    valueNumberID += "+" + String.valueOf(rightValueNumber);
+                    valueNumberID += "+" + rightValueNumber;
                 }
 
                 // Process the variable
-                AstNode var = statementChildren.get(0);
                 if (var instanceof VarAccAst) {
                     if (valueNumberTable.containsKey(valueNumberID)) {
                         valueNumberTable.put(var.DumpC(), valueNumberTable.get(valueNumberID));
@@ -162,23 +168,18 @@ public class BasicBlock {
                 AstNode expr = statementChildren.get(1);
 
                 assert (var instanceof VarAccAst || var instanceof ArrayAcc);
-                assert (var instanceof VarAccAst || expr instanceof ExprAst || expr instanceof ConstAst || expr instanceof ArrayAcc);
+                assert (expr instanceof VarAccAst || expr instanceof ExprAst || expr instanceof ConstAst || expr instanceof ArrayAcc);
 
                 // If variable can be rewritten, replace it with the rewritten variable using the rewrittenTable
                 if (var instanceof VarAccAst && expr instanceof ExprAst) {
-                    // TODO: Make the edge case checking cleaner if possible
                     String varName = var.DumpC();
                     int valueNumber = valueNumberTable.get(varName);
                     AstNode rewrittenNode = rewrittenTable.get(valueNumber);
 
                     if (varName != rewrittenNode.DumpC()) {
                         // Rewrite statement with ASTNode with rewrittenVarName
-
-                        // Get next child if available
                         rewrittenNode.InsertMeAsChildOf(var, 0);
-
                         // TODO: There are three children now. THis may break things later
-                        System.out.println("Rewrote " + varName + " with " + rewrittenNode.DumpC());
                     }
                 }
             }
