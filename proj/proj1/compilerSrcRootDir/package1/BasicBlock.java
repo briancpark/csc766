@@ -81,8 +81,8 @@ public class BasicBlock {
 
                 AstNode var = statementChildren.get(0);
                 AstNode expr = statementChildren.get(1);
-                // Process the expression
 
+                // Process the expression
                 AstNode left = null, right = null;
                 int exprValueNumber, leftValueNumber = -1, rightValueNumber = -1;
 
@@ -178,8 +178,11 @@ public class BasicBlock {
 
                     if (varName != rewrittenNode.DumpC()) {
                         // Rewrite statement with ASTNode with rewrittenVarName
-                        rewrittenNode.InsertMeAsChildOf(var, 0);
-                        // TODO: There are three children now. THis may break things later
+                        List<AstNode> assmntChildren = Collections.list(var.GetParentAst().GetChildren());
+                        AstNode exprAST = assmntChildren.get(1);
+                        assert (exprAST instanceof ExprAst);
+                        exprAST.DetachMe();
+                        rewrittenNode.InsertMeAsChildOf(statement, 1);
                     }
                 }
             }
