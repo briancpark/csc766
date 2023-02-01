@@ -69,8 +69,9 @@ public class FuncType extends BaseType {
         assert (false);  // do not gen code here.
     }
 
-    /** fnm is the name of the variable/field of this type.  indir is the
-     level of indirection to this function.
+    /**
+     * fnm is the name of the variable/field of this type.  indir is the
+     * level of indirection to this function.
      **/
 
     String GetPreDeclarations() throws AssertionError {
