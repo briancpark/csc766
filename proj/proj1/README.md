@@ -56,8 +56,8 @@ they are not considered to be the same if they have different indices. Simply, I
 and distinguished arrays apart from their indices by treating array + offset as a unique expression.
 
 The logic for value numbering is actually quite messy, as I had to account for the different types of ASTs. But since
-the compiler is optimizing the code for runtime, I sacrificed
-the efficiency of the code for readability and precise logic.
+the compiler is optimizing the code for runtime, I sacrificed the efficiency of the code for readability and precise
+logic.
 
 Note that this optimization may have no effect on certain programs, due to the size of each basic block. For example,
 automaton had no rewritten values, because the basic blocks were too small due to function calls and branching. Jacobi
