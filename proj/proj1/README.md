@@ -29,10 +29,10 @@ here is the `git diff`:
 
 ```diff
 briancpark@Brians-MBP proj1 % git diff --stat ce1412e294166dba5f6eb3
- proj/proj1/README.md                                           | 144 +++++++++++++++++---------------------------------------------------
- proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 125 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++++
-
+ proj/proj1/README.md                                           | 204 ++++++++++++++++++++++++++++++++------------------------------------
+ proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 134 ++++++++++++++++++++++++++++++++++++++++++++-
+ proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++
+ proj/proj1/proj1A.tar                                          | Bin 0 -> 610243 bytes
 ```
 
 ## Design Document
