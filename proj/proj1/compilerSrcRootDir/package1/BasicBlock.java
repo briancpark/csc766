@@ -14,14 +14,14 @@ public class BasicBlock {
     private final List<String> pred;
     // statements of the basic block
     private final List<AstNode> statements = new ArrayList<AstNode>(10);
+    private final HashMap<String, Integer> valueNumberTable;
+    private final HashMap<Integer, AstNode> rewrittenTable;
     // name of the block
     private String blockName;
     // label that the block ends with
     private String endLabel;
     // label that the block starts with
     private String startLabel;
-    private final HashMap<String, Integer> valueNumberTable;
-    private final HashMap<Integer, AstNode> rewrittenTable;
 
     // constructor
     public BasicBlock(String bName) {
@@ -74,7 +74,9 @@ public class BasicBlock {
 
     public void valueNumbering() {
         int valueNumber = 0;
-        for (AstNode statement : statements) {
+        int renameNumber = 0;
+        for (int i = 0; i < statements.size(); i++) {
+            AstNode statement = statements.get(i);
             if (statement instanceof AssignStat) {
                 List<AstNode> statementChildren = Collections.list(statement.GetChildren());
                 assert statementChildren.size() == 2;
@@ -137,18 +139,25 @@ public class BasicBlock {
 
                 String valueNumberID = String.valueOf(leftValueNumber);
                 if (rightValueNumber != -1) {
-                    valueNumberID += "+" + rightValueNumber;
+                    valueNumberID += expr.GetNodeName() + rightValueNumber;
                 }
 
                 // Process the variable
                 if (var instanceof VarAccAst) {
-                    if (valueNumberTable.containsKey(valueNumberID)) {
-                        valueNumberTable.put(var.DumpC(), valueNumberTable.get(valueNumberID));
+                    // Value renaming
+                    if (valueNumberTable.containsKey(var.DumpC())) {
+                        // Rename variable by inserting a new value number, to make it unique
+                        valueNumberTable.put(var.DumpC(), valueNumber++);
+                        rewrittenTable.put(valueNumberTable.get(var.DumpC()), var);
                     } else {
-                        exprValueNumber = valueNumber++;
-                        valueNumberTable.put(valueNumberID, exprValueNumber);
-                        valueNumberTable.put(var.DumpC(), exprValueNumber);
-                        rewrittenTable.put(exprValueNumber, var);
+                        if (valueNumberTable.containsKey(valueNumberID)) {
+                            valueNumberTable.put(var.DumpC(), valueNumberTable.get(valueNumberID));
+                        } else {
+                            exprValueNumber = valueNumber++;
+                            valueNumberTable.put(valueNumberID, exprValueNumber);
+                            valueNumberTable.put(var.DumpC(), exprValueNumber);
+                            rewrittenTable.put(exprValueNumber, var);
+                        }
                     }
                 }
             }

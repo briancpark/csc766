@@ -29,10 +29,10 @@ here is the `git diff`:
 
 ```diff
 briancpark@Brians-MBP proj1 % git diff --stat ce1412e294166dba5f6eb3
- proj/proj1/README.md                                           | 144 +++++++++++++++++---------------------------------------------------
- proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 125 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++++
-
+ proj/proj1/README.md                                           | 204 ++++++++++++++++++++++++++++++++------------------------------------
+ proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 134 ++++++++++++++++++++++++++++++++++++++++++++-
+ proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++
+ proj/proj1/proj1A.tar                                          | Bin 0 -> 610243 bytes
 ```
 
 ## Design Document
@@ -56,8 +56,8 @@ they are not considered to be the same if they have different indices. Simply, I
 and distinguished arrays apart from their indices by treating array + offset as a unique expression.
 
 The logic for value numbering is actually quite messy, as I had to account for the different types of ASTs. But since
-the compiler is optimizing the code for runtime, I sacrificed
-the efficiency of the code for readability and precise logic.
+the compiler is optimizing the code for runtime, I sacrificed the efficiency of the code for readability and precise
+logic.
 
 Note that this optimization may have no effect on certain programs, due to the size of each basic block. For example,
 automaton had no rewritten values, because the basic blocks were too small due to function calls and branching. Jacobi
