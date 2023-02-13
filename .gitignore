@@ -1,3 +1,7 @@
 .DS_Store
 *.class
 .idea
+*.aux
+*.log
+*.out
+*.synctex.gz
