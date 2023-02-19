@@ -1,0 +1,272 @@
+head	1.5;
+access;
+symbols;
+locks
+	dwilliam:1.5; strict;
+comment	@# @;
+
+
+1.5
+date	2002.06.26.18.59.35;	author dwilliam;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2002.06.21.15.59.16;	author dwilliam;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2002.06.20.19.26.14;	author dwilliam;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2002.06.07.19.00.24;	author dwilliam;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2002.06.07.18.47.17;	author dwilliam;	state Exp;
+branches;
+next	;
+
+
+desc
+@Cinst
+@
+
+
+1.5
+log
+@using dataRecorder (original)
+@
+text
+@/*
+ * ClassName.java
+ *
+ * Created on February 13, 2002, 5:12 PM
+ */
+
+package drivers;
+
+import ast.parser.*;
+import ast.simplifier.*;
+//import reda.DataRecorder;
+import reda.*;
+import tools.*;
+import java.lang.*;
+import java.io.*;
+
+/**
+ *
+ * @@author  administrator
+ * @@version 
+ */
+public class Cinst extends Object {
+
+    /** Creates new ClassName */
+    public Cinst() {
+    }
+
+    /**
+    * @@param args the command line arguments
+    */
+    public static void main (String args[]) throws AssertionError, IOException {
+        boolean inst = false;
+	boolean all = false;
+	for (int i=0; i<args.length; i++) {
+	    if (args[i].charAt(0) == '-'){
+		if (args[i].equals("-inst")){
+		    System.err.println("Instrumenting with RecInst insertions");
+		    inst = true;
+		}  else if (args[i].equals("-all")){
+		    System.err.println("Recording ALL memory accesses");
+		    all = true;
+		} else if (!args[i].equals("-acc")){
+		    System.err.println("Valid flags are:");
+		    System.err.println("\t-acc\tInstrument with RecAccess insertions. (default)");
+		    System.err.println("\t-all\tRecord ALL memory accesses");
+		    System.err.println("\t-inst\tInstrument with RecInst insertions.");
+		    System.exit(0);
+		}
+	    }
+	}
+	for (int i=0; i<args.length; i++) {
+	    if (args[i].charAt(0) != '-'){
+		System.err.print("Parsing the intermediate form of "+args[i]+"...");
+		ProgAst prog = new ProgAst(args[i]);
+		LocalSimplifier.Simplify(prog);
+		System.err.print("Done.\nGenerating C code for "+args[i]+"...");
+		prog.GenCode();
+		prog.Dump();
+		System.err.print("Done.\nInstrumenting "+args[i]+"...");
+		DataRecorder dr = new DataRecorder();//all);
+		dr.InstrumentProgram(prog);
+		/*	
+		GeneralRecorder dr;
+		if (inst)
+		    dr = new InstRecorder(prog);
+		else{
+		    if (all)
+			dr = new AccessRecorder(prog, true);
+		    else
+			dr = new AccessRecorder(prog);
+		}
+		dr.InstrumentProgram();
+		dr.GenerateCode();
+		*/
+		System.err.println("Done.");
+	    }
+        }
+    }
+}
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d1 79
+a79 76
+/*
+ * ClassName.java
+ *
+ * Created on February 13, 2002, 5:12 PM
+ */
+
+package drivers;
+
+import ast.parser.*;
+import ast.simplifier.*;
+//import reda.DataRecorder;
+import reda.*;
+import tools.*;
+import java.lang.*;
+import java.io.*;
+
+/**
+ *
+ * @@author  administrator
+ * @@version 
+ */
+public class Cinst extends Object {
+
+    /** Creates new ClassName */
+    public Cinst() {
+    }
+
+    /**
+    * @@param args the command line arguments
+    */
+    public static void main (String args[]) throws AssertionError, IOException {
+        boolean inst = false;
+	boolean all = false;
+	for (int i=0; i<args.length; i++) {
+	    if (args[i].charAt(0) == '-'){
+		if (args[i].equals("-inst")){
+		    System.err.println("Instrumenting with RecInst insertions");
+		    inst = true;
+		}  else if (args[i].equals("-all")){
+		    System.err.println("Recording ALL memory accesses");
+		    all = true;
+		} else if (!args[i].equals("-acc")){
+		    System.err.println("Valid flags are:");
+		    System.err.println("\t-acc\tInstrument with RecAccess insertions. (default)");
+		    System.err.println("\t-all\tRecord ALL memory accesses");
+		    System.err.println("\t-inst\tInstrument with RecInst insertions.");
+		    System.exit(0);
+		}
+	    }
+	}
+	for (int i=0; i<args.length; i++) {
+	    if (args[i].charAt(0) != '-'){
+		System.err.print("Parsing the intermediate form of "+args[i]+"...");
+		ProgAst prog = new ProgAst(args[i]);
+		LocalSimplifier.Simplify(prog);
+		System.err.print("Done.\nGenerating C code for "+args[i]+"...");
+		prog.GenCode();
+		prog.Dump();
+		System.err.print("Done.\nInstrumenting "+args[i]+"...");
+		//DataRecorder dr = new DataRecorder();//all);
+		//dr.InstrumentProgram(prog);
+		Recorder dr;
+		if (inst)
+		    dr = new InstRecorder();
+		else{
+		    if (all)
+			dr = new AccessRecorder(true);
+		    else
+			dr = new AccessRecorder();
+		}
+		dr.InstrumentProgram(prog);
+		System.err.println("Done.");
+	    }
+        }
+    }
+}
+@
+
+
+1.3
+log
+@flags for inst and access
+@
+text
+@d33 1
+d39 3
+d45 1
+d65 6
+a70 2
+		else
+		    dr = new AccessRecorder();
+@
+
+
+1.2
+log
+@flag for -all added doesn't do anything yet.
+@
+text
+@d11 2
+a12 1
+import reda.DataRecorder;
+d32 2
+a33 1
+        for (int i=0; i<args.length; i++) {
+d35 4
+a38 3
+		if (args[i].equals("-all"))
+		    System.err.println("all memory Accesses will be recorded");
+		else{
+d40 2
+a41 1
+		    System.err.println("\t-all\tshow all memory accesses");
+d55 7
+a61 1
+		DataRecorder dr = new DataRecorder();
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d32 23
+a54 10
+            System.err.print("Parsing the intermediate form of "+args[i]+"...");
+            ProgAst prog = new ProgAst(args[i]);
+            LocalSimplifier.Simplify(prog);
+            System.err.print("Done.\nGenerating C code for "+args[i]+"...");
+            prog.GenCode();
+            prog.Dump();
+            System.err.print("Done.\nInstrumenting "+args[i]+"...");
+            DataRecorder dr = new DataRecorder();
+            dr.InstrumentProgram(prog);
+            System.err.println("Done.");
+d57 1
+a57 1
+}@
