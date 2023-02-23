@@ -22,6 +22,19 @@ Note that on VCL, you may need to install `javac`:
 sudo apt install default-jdk -y
 ``` 
 
+The optimizations in this phase involve data flow analysis. You may choose to implement one or more of the following:
+
+* Constant propagation
+
+* Avail
+
+* Dead code elimination
+
+Note:
+
+no hard coding program output allowed
+no copying of other one's code allowed
+
 ## File and Directory Descriptions
 
 The starter code in this repository will look different as it has been linted and reformatted. To show the difference,
@@ -114,12 +127,20 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 1. Install IntelliJ. I’m using IntelliJ IDEA Ultimate, which is the paid edition. But as a student, you can get this for
    free. If you’re having trouble with Ultimate edition, then there is also a free “Community Edition” as well.
-2. Once in the IDE with your project, go to “FIle->Project Structure”
+2. Once in the IDE with your project, go to “File->Project Structure”
 3. Under “Project Structure” tab on left hand size, click on “Project”. Then next to “SDK”, we will need to install a
    Java SDK to work. Pick any, but for reference I did it on OpenJDK 19.
 4. Point Compiler output to compilerClassRootDir
 5. Under libraries, click “+” to add libraries. And select “Java”. Add the directory “compileSrcRootDir” and
    “AST_lib/src”. When prompted, you will be asked “Library ___ will be added to the selected module” Select the project
-   1 directory, not AST_lib.
+   1 directory, not AST_lib. Under Modules, you may need to delete `AST_lib` if it was automatically added and you were
+   seeing AST_lib as an option.
+6. Go to compilerSrcRootDir/package1/OptimizingCompiler and a green play button should appear to run the code. Click on
+   it. It will fail on first try, but that’s okay. We will fix that in the next step.
+7. Go to “Run->Edit Configurations”. We need to tune this configuration to replicate the command line arguments that the
+   Makefile provides. You will obviously need to add arguments such
+   as: `inputProgramDir/trivia outputProgramDir/trivia.new.c cfgOutputDir/trivia.cfg`. In addition to that, click on "
+   Modify Options", and under the Java options in the drop down menu, click on "Add VM options" and add `-ea` to the
+   argument field.
 
 If there is any error or issue with the setup, please contact [bcpark@ncsu.edu](mailto:bcpark@ncsu.edu).

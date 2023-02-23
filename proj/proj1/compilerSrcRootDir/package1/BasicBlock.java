@@ -2,10 +2,7 @@ package package1;
 
 import ast.parser.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class BasicBlock {
 
@@ -16,6 +13,11 @@ public class BasicBlock {
     private final List<AstNode> statements = new ArrayList<AstNode>(10);
     private final HashMap<String, Integer> valueNumberTable;
     private final HashMap<Integer, AstNode> rewrittenTable;
+    private final Set<ExprAst> availableSet;
+    private final Set<VarAccAst> varKillSet;
+    private final Set<ExprAst> DEExprSet;
+    private final Set<ExprAst> exprKillSet;
+
     // name of the block
     private String blockName;
     // label that the block ends with
@@ -32,6 +34,10 @@ public class BasicBlock {
         pred = new ArrayList<String>();
         valueNumberTable = new HashMap<String, Integer>();
         rewrittenTable = new HashMap<Integer, AstNode>();
+        availableSet = new HashSet<ExprAst>();
+        varKillSet = new HashSet<VarAccAst>();
+        DEExprSet = new HashSet<ExprAst>();
+        exprKillSet = new HashSet<ExprAst>();
     }
 
     // get methods
@@ -70,6 +76,92 @@ public class BasicBlock {
 
     public void addStatement(AstNode node) {
         this.statements.add(node);
+    }
+
+    public List<String> getSucc() {
+        return succ;
+    }
+
+    public List<String> getPred() {
+        return pred;
+    }
+
+    public Set<ExprAst> getAvailableSet() {
+        return availableSet;
+    }
+
+    public void setAvailableSet(Set<ExprAst> availableSet) {
+        this.availableSet.clear();
+        this.availableSet.addAll(availableSet);
+    }
+
+    public void DEExprInit() {
+        List<AstNode> statements = new ArrayList<>(this.statements);
+        Collections.reverse(statements);
+        for (AstNode statement : statements) {
+            if (statement instanceof AssignStat) {
+                List<AstNode> statementChildren = Collections.list(statement.GetChildren());
+                assert statementChildren.size() == 2;
+
+                AstNode var = statementChildren.get(0);
+                AstNode expr = statementChildren.get(1);
+
+                if (var instanceof VarAccAst) {
+                    varKillSet.add((VarAccAst) var);
+                }
+
+                if (expr instanceof ExprAst) {
+                    List<AstNode> exprChildren = Collections.list(expr.GetChildren());
+
+                    AstNode left = exprChildren.get(0);
+
+                    AstNode right = null;
+                    if (exprChildren.size() == 2) {
+                        right = exprChildren.get(1);
+
+
+                    }
+
+                    if (left instanceof VarAccAst && !varKillSet.contains(left)) {
+                        if (right != null && right instanceof VarAccAst && !varKillSet.contains(right)) {
+                            DEExprSet.add((ExprAst) expr);
+                        } else if (right == null) {
+                            DEExprSet.add((ExprAst) expr);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void ExprKillInit() {
+        for (AstNode statement : this.statements) {
+            if (statement instanceof AssignStat) {
+                List<AstNode> statementChildren = Collections.list(statement.GetChildren());
+                assert statementChildren.size() == 2;
+
+                AstNode var = statementChildren.get(0);
+                AstNode expr = statementChildren.get(1);
+
+                if (expr instanceof ExprAst && !(var instanceof ArrayAcc) && !expr.GetNodeName().equals("FuncCall")) {
+                    List<AstNode> exprChildren = Collections.list(expr.GetChildren());
+
+                    for (AstNode child : exprChildren) {
+                        if (child instanceof VarAccAst && varKillSet.contains(child)) {
+                            exprKillSet.add((ExprAst) expr);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public Set<ExprAst> getDEExprSet() {
+        return DEExprSet;
+    }
+
+    public Set<ExprAst> getExprKillSet() {
+        return exprKillSet;
     }
 
     public void valueNumbering() {
