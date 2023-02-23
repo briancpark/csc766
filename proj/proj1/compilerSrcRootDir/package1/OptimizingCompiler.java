@@ -53,7 +53,11 @@ public class OptimizingCompiler {
 
             // Phase 3
             // Perform redundancy elimination via value numbering on the CFG
-            valueNumbering(prog);
+            //  valueNumbering(prog);
+
+            // Phase 3.5
+            // Data Flow Analysis
+            availDFA(prog);
 
             // Phase 1
             // insert calls to recordInst() method into the Abstract Syntax Tree
@@ -89,6 +93,96 @@ public class OptimizingCompiler {
             out.close();
         } catch (IOException e) {
             System.err.println("Failed to generate output file.");
+        }
+    }
+
+    public static void availInit() {
+        for (CFG c : programFlow) {
+            for (BasicBlock b : c.getFunctionCFG()) {
+                b.DEExprInit();
+            }
+            for (BasicBlock b : c.getFunctionCFG()) {
+                b.ExprKillInit();
+            }
+        }
+    }
+
+    public static Set<AstNode> avail(BasicBlock b, List<BasicBlock> c) {
+        // iterate through every predecessor of b
+        Set<AstNode> availSet = new HashSet<AstNode>();
+
+        // Compute Available Expressions
+        for (String pred_name : b.getPred()) {
+            BasicBlock pred = null;
+            for (BasicBlock bb : c) {
+                if (bb.getBlockName().equals(pred_name)) {
+                    pred = bb;
+                    break;
+                }
+            }
+
+            if (pred != null) {
+                Set<AstNode> temp = new HashSet<AstNode>(pred.getAvailableSet());
+                Set<AstNode> deexpr = pred.getDEExprSet();
+                Set<AstNode> exprkill = pred.getExprKillSet();
+
+                temp.removeAll(exprkill);
+                temp.addAll(deexpr);
+                availSet.addAll(temp);
+            }
+        }
+        return availSet;
+    }
+
+    public static void availDFA(AstNode node) {
+        // Store values into a value number table
+        List<BasicBlock> allBasicBlocks = new ArrayList<BasicBlock>(programFlow.get(0).getFunctionCFG());
+        for (CFG c : programFlow) {
+            availInit();
+
+            Set<BasicBlock> worklist = new HashSet<BasicBlock>();
+            for (BasicBlock b : c.getFunctionCFG()) {
+                worklist.add(b);
+            }
+
+            while (!worklist.isEmpty()) {
+                // Pop off element from worklist set
+                BasicBlock b = worklist.iterator().next();
+                worklist.remove(b);
+
+                Set<AstNode> availSetOld = new HashSet<AstNode>(b.getAvailableSet());
+                Set<AstNode> availSetNew = new HashSet<AstNode>(avail(b, allBasicBlocks));
+                b.setAvailableSet(availSetNew);
+
+                if (availSetOld.size() != availSetNew.size()) {
+                    List<String> successors_name = b.getSucc();
+                    for (String succ_name : successors_name) {
+                        BasicBlock succ = null;
+                        for (BasicBlock bb : allBasicBlocks) {
+                            if (bb.getBlockName().equals(succ_name)) {
+                                succ = bb;
+                                break;
+                            }
+                        }
+                        if (succ != null) {
+                            worklist.add(succ);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Print out the available set for each block
+        for (CFG c : programFlow) {
+            for (BasicBlock b : c.getFunctionCFG()) {
+                if (b.getAvailableSet().size() > 0) {
+                    Set<AstNode> avail = b.getAvailableSet();
+                    System.out.println("Available set for " + b.getBlockName() + " is:");
+                    for (AstNode e : avail) {
+                        System.out.println(e.DumpC());
+                    }
+                }
+            }
         }
     }
 
