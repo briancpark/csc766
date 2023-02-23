@@ -13,10 +13,10 @@ public class BasicBlock {
     private final List<AstNode> statements = new ArrayList<AstNode>(10);
     private final HashMap<String, Integer> valueNumberTable;
     private final HashMap<Integer, AstNode> rewrittenTable;
-    private final Set<ExprAst> availableSet;
+    private final Set<AstNode> availableSet;
     private final Set<VarAccAst> varKillSet;
-    private final Set<ExprAst> DEExprSet;
-    private final Set<ExprAst> exprKillSet;
+    private final Set<AstNode> DEExprSet;
+    private final Set<AstNode> exprKillSet;
 
     // name of the block
     private String blockName;
@@ -34,10 +34,10 @@ public class BasicBlock {
         pred = new ArrayList<String>();
         valueNumberTable = new HashMap<String, Integer>();
         rewrittenTable = new HashMap<Integer, AstNode>();
-        availableSet = new HashSet<ExprAst>();
+        availableSet = new HashSet<AstNode>();
         varKillSet = new HashSet<VarAccAst>();
-        DEExprSet = new HashSet<ExprAst>();
-        exprKillSet = new HashSet<ExprAst>();
+        DEExprSet = new HashSet<AstNode>();
+        exprKillSet = new HashSet<AstNode>();
     }
 
     // get methods
@@ -86,13 +86,21 @@ public class BasicBlock {
         return pred;
     }
 
-    public Set<ExprAst> getAvailableSet() {
-        return availableSet;
+    public Set<AstNode> getAvailableSet() {
+        return this.availableSet;
     }
 
-    public void setAvailableSet(Set<ExprAst> availableSet) {
+    public void setAvailableSet(Set<AstNode> availableSet) {
         this.availableSet.clear();
         this.availableSet.addAll(availableSet);
+    }
+
+    public Set<AstNode> getDEExprSet() {
+        return this.DEExprSet;
+    }
+
+    public Set<AstNode> getExprKillSet() {
+        return this.exprKillSet;
     }
 
     public void DEExprInit() {
@@ -108,6 +116,8 @@ public class BasicBlock {
 
                 if (var instanceof VarAccAst) {
                     varKillSet.add((VarAccAst) var);
+                } else {
+                    continue;
                 }
 
                 if (expr instanceof ExprAst) {
@@ -118,15 +128,13 @@ public class BasicBlock {
                     AstNode right = null;
                     if (exprChildren.size() == 2) {
                         right = exprChildren.get(1);
-
-
                     }
 
-                    if (left instanceof VarAccAst && !varKillSet.contains(left)) {
-                        if (right != null && right instanceof VarAccAst && !varKillSet.contains(right)) {
-                            DEExprSet.add((ExprAst) expr);
+                    if ((left instanceof VarAccAst || left instanceof ConstAst) && !varKillSet.contains(left)) {
+                        if (right != null && (right instanceof VarAccAst || right instanceof ConstAst) && !varKillSet.contains(right)) {
+                            DEExprSet.add(expr);
                         } else if (right == null) {
-                            DEExprSet.add((ExprAst) expr);
+                            DEExprSet.add(expr);
                         }
                     }
                 }
@@ -148,20 +156,12 @@ public class BasicBlock {
 
                     for (AstNode child : exprChildren) {
                         if (child instanceof VarAccAst && varKillSet.contains(child)) {
-                            exprKillSet.add((ExprAst) expr);
+                            exprKillSet.add(expr);
                         }
                     }
                 }
             }
         }
-    }
-
-    public Set<ExprAst> getDEExprSet() {
-        return DEExprSet;
-    }
-
-    public Set<ExprAst> getExprKillSet() {
-        return exprKillSet;
     }
 
     public void valueNumbering() {

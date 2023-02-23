@@ -96,16 +96,6 @@ public class OptimizingCompiler {
         }
     }
 
-    public static BasicBlock getBasicBlock(String name) {
-        for (CFG c : programFlow) {
-            for (BasicBlock b : c.getFunctionCFG()) {
-                if (b.getBlockName().equals(name))
-                    return b;
-            }
-        }
-        return null;
-    }
-
     public static void availInit() {
         for (CFG c : programFlow) {
             for (BasicBlock b : c.getFunctionCFG()) {
@@ -117,20 +107,9 @@ public class OptimizingCompiler {
         }
     }
 
-    public static Set<ExprAst> avail(BasicBlock b, List<BasicBlock> c) {
+    public static Set<AstNode> avail(BasicBlock b, List<BasicBlock> c) {
         // iterate through every predecessor of b
-        Set<ExprAst> availSetNew = new HashSet<ExprAst>();
-
-        List<String> preds = b.getPred();
-        List<BasicBlock> bblocks = new ArrayList<BasicBlock>();
-        for (String pred_name : preds) {
-            for (BasicBlock bb : c) {
-                if (bb.getBlockName().equals(pred_name)) {
-                    bblocks.add(bb);
-                    break;
-                }
-            }
-        }
+        Set<AstNode> availSet = new HashSet<AstNode>();
 
         // Compute Available Expressions
         for (String pred_name : b.getPred()) {
@@ -143,16 +122,16 @@ public class OptimizingCompiler {
             }
 
             if (pred != null) {
-                Set<ExprAst> temp = new HashSet<ExprAst>(pred.getAvailableSet());
-                Set<ExprAst> deexpr = pred.getDEExprSet();
-                Set<ExprAst> exprkill = pred.getExprKillSet();
+                Set<AstNode> temp = new HashSet<AstNode>(pred.getAvailableSet());
+                Set<AstNode> deexpr = pred.getDEExprSet();
+                Set<AstNode> exprkill = pred.getExprKillSet();
 
                 temp.removeAll(exprkill);
                 temp.addAll(deexpr);
-                availSetNew.addAll(temp);
+                availSet.addAll(temp);
             }
         }
-        return availSetNew;
+        return availSet;
     }
 
     public static void availDFA(AstNode node) {
@@ -171,9 +150,8 @@ public class OptimizingCompiler {
                 BasicBlock b = worklist.iterator().next();
                 worklist.remove(b);
 
-                Set<ExprAst> availSetOld, availSetNew;
-                availSetOld = new HashSet<ExprAst>(b.getAvailableSet());
-                availSetNew = new HashSet<ExprAst>(avail(b, allBasicBlocks));
+                Set<AstNode> availSetOld = new HashSet<AstNode>(b.getAvailableSet());
+                Set<AstNode> availSetNew = new HashSet<AstNode>(avail(b, allBasicBlocks));
                 b.setAvailableSet(availSetNew);
 
                 if (availSetOld.size() != availSetNew.size()) {
@@ -198,9 +176,9 @@ public class OptimizingCompiler {
         for (CFG c : programFlow) {
             for (BasicBlock b : c.getFunctionCFG()) {
                 if (b.getAvailableSet().size() > 0) {
-                    Set<ExprAst> avail = b.getAvailableSet();
+                    Set<AstNode> avail = b.getAvailableSet();
                     System.out.println("Available set for " + b.getBlockName() + " is:");
-                    for (ExprAst e : avail) {
+                    for (AstNode e : avail) {
                         System.out.println(e.DumpC());
                     }
                 }

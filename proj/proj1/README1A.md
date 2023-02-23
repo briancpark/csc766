@@ -1,4 +1,4 @@
-# Project 1 Phase 2: Data Flow
+# Project 1 Phase I: Value Numbering
 
 Brian Park
 
@@ -16,16 +16,11 @@ make build -j
 make run
 ```
 
-I implemented Avail Set Analysis, and you can see the avail expressions printed out for each basic block when running
-the commands.
-
-```sh
-
 Note that on VCL, you may need to install `javac`:
 
 ```sh
 sudo apt install default-jdk -y
-``` 
+```
 
 ## File and Directory Descriptions
 
@@ -42,20 +37,36 @@ briancpark@Brians-MBP proj1 % git diff --stat ce1412e294166dba5f6eb3
 
 ## Design Document
 
-The codebase was modified to do Data Flow Analysis of Available Expression sets. To accomplish this, I added a
-subroutine `availDFA(prog)` to the `OptimizingCompiler` class. This subroutine first computes the DEExpr and ExprKillÒ
-sets for each basic block in the control flow graph given. After that, I apply the avail set analysis algorithm
-mentioned in class into practice using Java sets. The implementation is pretty straightforward based on the pseudocode
-presented from lecture.
+The codebase was modified to add support for redundancy elimination via value numbering on the control flow graph. To
+accomplish this, I added a subroutine `valueNumbering(prog)` to the `OptimizingCompiler` class. This subroutine first
+computes the two hash tables required for value numbering, `valueNumberTable` and `rewrittenTable`. This was only done
+at a basic block level, so I added two more functions, `valueNumbering` and `rewrite` to the `BasicBlock` class. To
+implement value numbering at a large scope (super value numbering), I would've added a subroutine to the `CFG` class
+that inherited the hash tables from the basic blocks and then performed the value numbering on the entire graph. But
+that was not the main goal of this assignment, so I did not implement it.
 
-## Available Expression Sets
+## Optimizations: Value Numbering
 
-There were no optimizations done with available expression sets. Since this is Data Flow Analysis, the only thing done
-was printing out the available sets for each basic blocks. The output shows that there are sometimes no sets for certain
-programs, and that is because some of those programs are filled with only control statements like if and else, filled
-with constants, or filled with array assignments. These are all cases where these functionalities weren't implemented,
-mainly because we weren't taught how to deal with array assignments and the implementation could be a little tricky to
-consider as array are mutable. Expressions were considered with variables. I also considered expressions with constants.
+The value numbering is implemented with parsing the basic block's statement and expressions. I had to ignore expression
+ASTs with functions, as that gets messy with variable length children, as functions can pass multiple arguments. Why
+are functions ignored? I made that decision since you can call the same function with same arguments, but it may have
+different effect if it has access to global variables or a different stack frame. Thus, I decided to ignore functions
+for the sake of simplicity. On the other hand, I accounted for expressions and arrays. Arrays have a special case, as
+they are not considered to be the same if they have different indices. Simply, I used the array AST type to my advantage
+and distinguished arrays apart from their indices by treating array + offset as a unique expression.
+
+The logic for value numbering is actually quite messy, as I had to account for the different types of ASTs. But since
+the compiler is optimizing the code for runtime, I sacrificed the efficiency of the code for readability and precise
+logic.
+
+Note that this optimization may have no effect on certain programs, due to the size of each basic block. For example,
+automaton had no rewritten values, because the basic blocks were too small due to function calls and branching. Jacobi
+program had a lot of rewritten values, because the basic blocks were large and had a lot of arithmetic operations.
+
+As a result, there were no changes in instructions because only redundant variables were eliminated. But the number of
+instructions defined by this project are defined by the lines of C code. So actually, elimiating redundant expressions
+should reduce the number of instructions executed on the ALU as well as reduce the usage of registers that would incur
+register spilling.
 
 ## Debugging and Other Notes
 
