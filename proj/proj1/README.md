@@ -33,11 +33,12 @@ The starter code in this repository will look different as it has been linted an
 here is the `git diff`:
 
 ```diff
-briancpark@Brians-MBP proj1 % git diff --stat ce1412e294166dba5f6eb3
- proj/proj1/README.md                                           | 204 ++++++++++++++++++++++++++++++++------------------------------------
- proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 134 ++++++++++++++++++++++++++++++++++++++++++++-
- proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  19 +++++++
- proj/proj1/proj1A.tar                                          | Bin 0 -> 610243 bytes
+briancpark@Brians-MacBook-Pro proj1 % git diff --stat acb76f1b213df764f5f9d5a2ead77a9cc4c7354c     
+ proj/proj1/README.md                                           |  63 ++++++++++++++++----------------
+ proj/proj1/README1A.md                                         | 133 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ proj/proj1/compilerSrcRootDir/package1/BasicBlock.java         | 100 ++++++++++++++++++++++++++++++++++++++++++++++++---
+ proj/proj1/compilerSrcRootDir/package1/OptimizingCompiler.java |  96 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 354 insertions(+), 38 deletions(-)
 ```
 
 ## Design Document
