@@ -1,5 +1,0 @@
-while ($1) {
-	sed "s/Assertion.assert/assert /g" $1 > $1.bak
-	mv $1.bak $1
-	shift
-}
