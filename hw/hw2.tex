@@ -32,11 +32,11 @@ for(i=50;i>=10;i=i-7)
 
 \begin{Answer}
 \begin{verbatim}
-for(i=16;i<=56;i=i+1) 
-    X[i+6,i+7]=0;
+for(i=0;i<=5;i=i+1) 
+    X[i*7+15,i*7+16]=0;
 \end{verbatim}
 \end{Answer}
-
+\newpage
 \section{}
 \begin{enumerate}[a)]
 \item
@@ -82,8 +82,8 @@ for (i=1; i<100; i++)
 		\end{pmatrix}
 		+
 		\begin{pmatrix}
-		1 \\
-		29 \\
+		-1 \\
+		-29 \\
 		-2 \\
 		39
 		\end{pmatrix}
@@ -159,65 +159,72 @@ for (i=1; i<100; i++)
 		\end{pmatrix}
 		$$
 		\end{Answer}
+		\newpage
 	\item Use the Fourier-Motzkin elimination algorithm to eliminate $i$ from each of the sets of constraints obtained in the exercise (2).
 		\begin{Answer}
 		a. 
-		$$L_i = 0$$
-		$$U_i = 30$$
-		$$L_j = i + 2, 0$$
-		$$U_j = 40 - i, 40$$
+		$$L_i = 1$$
+		$$U_i = 29$$
+		$$L_j = i + 2, 3$$
+		$$U_j = 39 - i, 38$$
 		
 		b.
 		$$L_i = 10$$
 		$$U_i = 1000$$
 		$$L_j = i, 10$$
-		$$U_j = i + 10, 1010$$
+		$$U_j = i + 9, 1009$$
 		
 		c.
 		$$L_i = 1$$
-		$$U_i = 100$$
+		$$U_i = 99$$
 		$$L_j = 0$$
-		$$U_j = 100 + i, 200$$
+		$$U_j = 99 + i, 198$$
 		$$L_k = i + j, 1$$
-		$$U_k = 100 - i -j, 99$$
+		$$U_k = 99 - i - j, 98$$
 		\end{Answer}
+		\newpage
 	\item For each of the three loop nests, rewrite the code so the axis $i$ is replaced by the major diagonal, i.e., use loop index variable $m=j-i$. The new axis should correspond to the outermost loop.
 		\begin{Answer}
 		Transform constants using $m=j -i$, $j = m + i$, $i = j - m$. \\
 		a. 
 		$$i \ge 1$$
 		$$i \le 29$$
-		$$j \ge i + 2$$
-		$$j \le 40 - i$$
+		$$j \ge 3$$
+		$$j \le 38$$
 		
 		Transform constants:
-		$$j - m \ge 1$$
-		$$j - m \le 29$$
-		$$j \ge j - m + 2$$
-		$$j \le 40 - j - m$$
-		Which can be simplified to:
-		$$m \ge 29$$
+		$$m \ge j - 29$$
 		$$m \le j - 1$$
-		$$m \ge 2$$
-		$$j \le \frac{40 - m}{2}$$
+		$$j \ge 3$$
+		$$j \le 38$$
+\begin{verbatim}
+for (j=3; j<=38;j++)
+    for (m=j-29; m<j-1; m++)
+        X[j-m,j]=0;
+\end{verbatim}
 		
 		b.
 		$$i \ge 10$$
 		$$i \le 1000$$
 		$$j \ge i$$
-		$$j \le i + 10$$
+		$$j \le i + 9$$
 		
 		Transform constants:
-		$$j - m \ge 10$$
+		$$j - m \ge 9$$
 		$$j - m \le 1000$$
 		$$j \ge j - m$$
-		$$j \le j - m + 10$$
+		$$j \le j - m + 9$$
 		Which can be simplified to:
-		$$j \ge 10 + m$$
+		$$j \ge 9 + m$$
 		$$j \le 1000 + m$$
 		$$m \ge 0$$
 		$$m \le 10$$
-		
+
+\begin{verbatim}
+for (m=0; m<=9;m++) 
+    for (j=9+m; j<1000+m; j++)
+        X[j-m,j]=0;
+\end{verbatim}	
 		c.
 		$$i \ge 1$$
 		$$i \le 99$$
@@ -241,6 +248,13 @@ for (i=1; i<100; i++)
 		$$j \le 100 + j - m$$
 		$$k \ge i + j$$
 		$$k \le 100 - 2j + m$$
+		
+\begin{verbatim}
+for (i=1; i<100; i++)
+    for (j=0; j<100+i; j++)
+        for (k=i+j; k<100-i-j; k++) 
+            X[i,j,k]=0;
+\end{verbatim}
 		\end{Answer}
 \end{enumerate}
 \end{document}
