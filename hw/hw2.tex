@@ -169,47 +169,32 @@ for (i=1; i<100; i++)
 		\newpage
 	\item Use the Fourier-Motzkin elimination algorithm to eliminate $i$ from each of the sets of constraints obtained in the exercise (2).
 		\begin{Answer}
-		a. 
-		$$L_i = 1$$
-		$$U_i = 29$$
-		$$L_j = i + 2, 3$$
-		$$U_j = 39 - i, 38$$
-		
-		b.
-		$$L_i = 10$$
-		$$U_i = 1000$$
-		$$L_j = i, 10$$
-		$$U_j = i + 9, 1009$$
-		
-		c.
-		$$L_i = 1$$
-		$$U_i = 99$$
-		$$L_j = 0$$
-		$$U_j = 99 + i, 198$$
-		$$L_k = i + j, 1$$
-		$$U_k = 99 - i - j, 98$$
-		\end{Answer}
-		\newpage
-	\item For each of the three loop nests, rewrite the code so the axis $i$ is replaced by the major diagonal, i.e., use loop index variable $m=j-i$. The new axis should correspond to the outermost loop.
-		\begin{Answer}
 		Transform constants using $m=j -i$, $j = m + i$, $i = j - m$. \\
 		a. 
 		$$i \ge 1$$
 		$$i \le 29$$
-		$$j \ge 3$$
-		$$j \le 38$$
+		$$j \ge i + 2$$
+		$$j \le 39 - i$$
 		
 		Transform constants:
-		$$m \ge j - 29$$
-		$$m \le j - 1$$
-		$$j \ge 3$$
-		$$j \le 38$$
-\begin{verbatim}
-for (j=3; j<=38;j++)
-    for (m=j-29; m<j-1; m++)
-        X[j-m,j]=0;
-\end{verbatim}
+		$$j - m \ge 1$$
+		$$j - m \le 29$$
+		$$j \ge j - m + 2$$
+		$$j \le 39 - j + m$$
 		
+		$$j \ge m + 1$$
+		$$j \le m + 29$$
+		$$m \ge 2$$
+		$$m \ge 2j - 39$$
+		$$m \le 37$$ 
+		
+		(from 1nd inequality $j - m \ge 1$
+
+		$$L_m = 2$$
+		$$U_m = 37$$
+		$$L_j = m + 1$$
+		$$U_j = m + 29$$
+
 		b.
 		$$i \ge 10$$
 		$$i \le 1000$$
@@ -217,50 +202,97 @@ for (j=3; j<=38;j++)
 		$$j \le i + 9$$
 		
 		Transform constants:
-		$$j - m \ge 9$$
+		$$j - m \ge 10$$
 		$$j - m \le 1000$$
 		$$j \ge j - m$$
 		$$j \le j - m + 9$$
-		Which can be simplified to:
-		$$j \ge 9 + m$$
-		$$j \le 1000 + m$$
+		
+		$$j \ge m + 10$$
+		$$j \le m + 1000$$
 		$$m \ge 0$$
-		$$m \le 10$$
+		$$m \le 9$$
+		
+		$$L_m = 0$$
+		$$U_m = 9$$
+		$$L_j = m + 10$$
+		$$U_j = m + 1000$$
 
-\begin{verbatim}
-for (m=0; m<=9;m++) 
-    for (j=9+m; j<1000+m; j++)
-        X[j-m,j]=0;
-\end{verbatim}	
 		c.
 		$$i \ge 1$$
 		$$i \le 99$$
 		$$j \ge 0$$
-		$$j \le 100 + i$$
+		$$j \le 99 + i$$
 		$$k \ge i + j$$
-		$$k \le 100 - i - j$$
+		$$k \le 99 - i - j$$
 		
-		Transform constants:
-		$$j - m \ge 1$$
-		$$j - m \le 99$$
+		$$j \ge m + 1$$
+		$$j \le m + 99$$
 		$$j \ge 0$$
-		$$j \le 100 + j - m$$
-		$$k \ge i + j$$
-		$$k \le 100 - j + m - j$$
+		$$m \le 99$$
+		$$k \ge 2j - m$$
+		$$k \le 99 - 2j + m$$
 		
-		Which can be simplified to:
-		$$j - m \ge 1$$
-		$$j - m \le 99$$
+		$$m \ge j - 99$$
+		$$m \le j - 1$$
 		$$j \ge 0$$
-		$$j \le 100 + j - m$$
-		$$k \ge i + j$$
-		$$k \le 100 - 2j + m$$
+		$$m \le 99$$
+		$$k \ge 2j - m$$
+		$$k \le 99 - 2j + m$$
+
+		$$j \ge 0$$		
+		$$j \le m + 99$$
+		$$m \le - 1$$
+		$$m \le 99$$
+		$$k \ge 2j - m$$
+		$$k \le 99 - 2j + m$$
+		
+		
+		$$L_m = -1$$
+		$$U_m = 99$$
+		$$L_j = 0$$
+		$$U_j = m + 99$$
+		$$L_k = 2j - m$$
+		$$U_k = 99 - 2j + m$$
+		\end{Answer}
+		\newpage
+	\item For each of the three loop nests, rewrite the code so the axis $i$ is replaced by the major diagonal, i.e., use loop index variable $m=j-i$. The new axis should correspond to the outermost loop.
+		\begin{Answer}
+		Transform constants using $m=j -i$, $j = m + i$, $i = j - m$. \\
+		a. 
+		$$L_m = 2$$
+		$$U_m = 37$$
+		$$L_j = m + 1$$
+		$$U_j = m + 29$$
+\begin{verbatim}
+for (m=2; m<=37;m++)
+    for (j=m+1; j<=m+29; j++)
+        X[j-m,j]=0;
+\end{verbatim}
+		
+		b.
+		$$L_m = 0$$
+		$$U_m = 9$$
+		$$L_j = m + 10$$
+		$$U_j = m + 1000$$
 		
 \begin{verbatim}
-for (i=1; i<100; i++)
-    for (j=0; j<100+i; j++)
-        for (k=i+j; k<100-i-j; k++) 
-            X[i,j,k]=0;
+for (m=0; m<=9;m++) 
+    for (j=m+10; j<1000+m; j++)
+        X[j-m,j]=0;
+\end{verbatim}	
+		c.
+		$$L_m = -1$$
+		$$U_m = 99$$
+		$$L_j = 0$$
+		$$U_j = m + 99$$
+		$$L_k = 2j - m$$
+		$$U_k = 99 - 2j + m$$
+		
+\begin{verbatim}
+for (m=-1; m<99; m++)
+    for (j=0; j<m+99; j++)
+        for (k=2j - m; k<99 - 2j + m; k++) 
+            X[j-m,j,k]=0;
 \end{verbatim}
 		\end{Answer}
 \end{enumerate}
