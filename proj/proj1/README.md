@@ -25,7 +25,7 @@ Note that on VCL, you may need to install `javac`:
 
 ```sh
 sudo apt install default-jdk -y
-``` 
+```
 
 ## File and Directory Descriptions
 
